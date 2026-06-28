@@ -124,6 +124,19 @@ export const es: Messages = {
     "cookie-policy": "Política de cookies",
     disclaimer: "Aviso legal",
   },
+  blog: {
+    indexTitle: "El blog de FileShrinking",
+    indexSubtitle:
+      "Guías prácticas para comprimir y convertir archivos: formatos, equilibrio de calidad y cómo reducir el tamaño sin perder lo que importa. Todas las herramientas que mencionamos funcionan de forma privada en tu navegador.",
+    indexMetaTitle: "Blog — Guías y consejos de compresión",
+    indexMetaDescription:
+      "Guías prácticas y directas para comprimir imágenes, PDF, vídeo y audio: formatos, equilibrio de calidad y cómo reducir archivos sin perder calidad.",
+    comingSoon: "Próximamente habrá artículos.",
+    minRead: "{n} min de lectura",
+    updatedOn: "actualizado el {date}",
+    aboutAuthor: "Sobre el autor",
+    backToAll: "Volver a todos los artículos",
+  },
   langSwitcher: {
     label: "Cambiar idioma",
   },

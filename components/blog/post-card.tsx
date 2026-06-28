@@ -1,18 +1,29 @@
 import Link from "next/link";
-import { Clock, ArrowRight } from "lucide-react";
+import { Clock } from "lucide-react";
 import { getAuthor } from "@/lib/blog/authors";
 import type { BlogPost } from "@/lib/blog/types";
+import {
+  DEFAULT_LOCALE,
+  LOCALE_META,
+  localizePath,
+  type Locale,
+} from "@/lib/i18n/config";
+import { getT } from "@/lib/i18n/messages";
 
-function formatDate(iso: string): string {
-  return new Date(iso + "T00:00:00Z").toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  });
+function formatDate(iso: string, locale: Locale): string {
+  return new Date(iso + "T00:00:00Z").toLocaleDateString(
+    LOCALE_META[locale].bcp47,
+    { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" },
+  );
 }
 
-export function PostCard({ post }: { post: BlogPost }) {
+export function PostCard({
+  post,
+  locale = DEFAULT_LOCALE,
+}: {
+  post: BlogPost;
+  locale?: Locale;
+}) {
   const author = getAuthor(post.authorId);
   return (
     <article className="group relative flex flex-col rounded-xl border border-border bg-card p-5 transition-all hover:border-brand/40 hover:shadow-md hover:shadow-brand/5">
@@ -28,7 +39,7 @@ export function PostCard({ post }: { post: BlogPost }) {
       </div>
       <h2 className="text-lg font-semibold tracking-tight">
         <Link
-          href={`/blog/${post.slug}`}
+          href={localizePath(`/blog/${post.slug}`, locale)}
           className="after:absolute after:inset-0 focus-visible:outline-none"
         >
           {post.title}
@@ -39,11 +50,11 @@ export function PostCard({ post }: { post: BlogPost }) {
       </p>
       <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
         <span>
-          {author.name} · {formatDate(post.datePublished)}
+          {author.name} · {formatDate(post.datePublished, locale)}
         </span>
         <span className="inline-flex items-center gap-1">
           <Clock className="size-3" aria-hidden="true" />
-          {post.readingMinutes} min
+          {getT(locale)("blog.minRead", { n: post.readingMinutes })}
         </span>
       </div>
     </article>

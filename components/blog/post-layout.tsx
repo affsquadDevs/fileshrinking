@@ -9,31 +9,47 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { blogPostingSchema, breadcrumbSchema, personSchema } from "@/lib/seo/schema";
 import { getAuthor } from "@/lib/blog/authors";
 import type { BlogPost } from "@/lib/blog/types";
+import {
+  DEFAULT_LOCALE,
+  LOCALE_META,
+  localizePath,
+  type Locale,
+} from "@/lib/i18n/config";
+import { getT } from "@/lib/i18n/messages";
 
-function formatDate(iso: string): string {
-  return new Date(iso + "T00:00:00Z").toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    timeZone: "UTC",
-  });
+function formatDate(iso: string, locale: Locale): string {
+  return new Date(iso + "T00:00:00Z").toLocaleDateString(
+    LOCALE_META[locale].bcp47,
+    { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" },
+  );
 }
 
-export function PostLayout({ post }: { post: BlogPost }) {
+export function PostLayout({
+  post,
+  locale = DEFAULT_LOCALE,
+}: {
+  post: BlogPost;
+  locale?: Locale;
+}) {
+  const t = getT(locale);
+  const lp = (href: string) => localizePath(href, locale);
   const author = getAuthor(post.authorId);
-  const published = formatDate(post.datePublished);
-  const modified = post.dateModified ? formatDate(post.dateModified) : null;
+  const published = formatDate(post.datePublished, locale);
+  const modified = post.dateModified
+    ? formatDate(post.dateModified, locale)
+    : null;
   const Content = post.Content;
 
   return (
     <Container className="max-w-3xl py-8 lg:py-10">
       <Breadcrumbs
         items={[
-          { label: "Home", href: "/" },
-          { label: "Blog", href: "/blog" },
+          { label: t("common.home"), href: lp("/") },
+          { label: t("nav.blog"), href: lp("/blog") },
           { label: post.title },
         ]}
         className="mb-6"
+        ariaLabel={t("common.breadcrumb")}
       />
 
       <article>
@@ -59,11 +75,13 @@ export function PostLayout({ post }: { post: BlogPost }) {
             <span className="inline-flex items-center gap-1.5">
               <CalendarClock className="size-3.5" aria-hidden="true" />
               {published}
-              {modified && modified !== published ? ` · updated ${modified}` : ""}
+              {modified && modified !== published
+                ? ` · ${t("blog.updatedOn", { date: modified })}`
+                : ""}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Clock className="size-3.5" aria-hidden="true" />
-              {post.readingMinutes} min read
+              {t("blog.minRead", { n: post.readingMinutes })}
             </span>
           </div>
         </header>
@@ -79,7 +97,7 @@ export function PostLayout({ post }: { post: BlogPost }) {
         {/* Author bio (E-E-A-T) */}
         <aside className="mt-12 rounded-xl border border-border bg-muted/30 p-6">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            About the author
+            {t("blog.aboutAuthor")}
           </h2>
           <p className="mt-2 font-medium">
             {author.name}{" "}
@@ -92,10 +110,10 @@ export function PostLayout({ post }: { post: BlogPost }) {
 
         <div className="mt-10">
           <Link
-            href="/blog"
+            href={lp("/blog")}
             className="text-sm font-medium text-brand hover:underline"
           >
-            ← Back to all articles
+            ← {t("blog.backToAll")}
           </Link>
         </div>
       </article>
@@ -119,8 +137,8 @@ export function PostLayout({ post }: { post: BlogPost }) {
             sameAs: author.sameAs,
           }),
           breadcrumbSchema([
-            { name: "Home", url: "/" },
-            { name: "Blog", url: "/blog" },
+            { name: t("common.home"), url: lp("/") },
+            { name: t("nav.blog"), url: lp("/blog") },
             { name: post.title },
           ]),
         ]}

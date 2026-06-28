@@ -131,6 +131,19 @@ export const en = {
     "cookie-policy": "Cookie Policy",
     disclaimer: "Disclaimer",
   },
+  blog: {
+    indexTitle: "The FileShrinking Blog",
+    indexSubtitle:
+      "Practical guides to compressing and converting files — formats, quality trade-offs, and how to make things smaller without losing what matters. Every tool we mention runs privately in your browser.",
+    indexMetaTitle: "Blog — Compression Guides & Tips",
+    indexMetaDescription:
+      "Practical, no-nonsense guides to compressing images, PDFs, video and audio: formats, quality trade-offs, and how to shrink files without losing quality.",
+    comingSoon: "Articles are coming soon.",
+    minRead: "{n} min read",
+    updatedOn: "updated {date}",
+    aboutAuthor: "About the author",
+    backToAll: "Back to all articles",
+  },
   langSwitcher: {
     label: "Change language",
   },

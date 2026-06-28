@@ -28,6 +28,9 @@ function englishPaths(): string[][] {
   ];
   const seen = new Set<string>();
   return paths.filter((segs) => {
+    // Blog routes are handled by dedicated app/[locale]/blog/* routes — exclude
+    // them here so prerendered paths don't collide.
+    if (segs[0] === "blog") return false;
     const key = segs.join("/");
     return seen.has(key) ? false : (seen.add(key), true);
   });
