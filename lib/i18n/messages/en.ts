@@ -11,6 +11,7 @@ export const en = {
   common: {
     skipToContent: "Skip to content",
     allTools: "All tools",
+    openTool: "Open tool",
     home: "Home",
     breadcrumb: "Breadcrumb",
     privacyBadge: "Files are processed on your device — never uploaded.",
@@ -78,6 +79,7 @@ export const en = {
     preparing: "Preparing…",
     compressing: "Compressing…",
     download: "Download",
+    remove: "Remove",
     downloadAll: "Download all (.zip)",
     reCompress: "Re-compress",
     clear: "Clear",
@@ -90,6 +92,34 @@ export const en = {
     queuedSummary: "{count} file(s) queued",
     skipped:
       "Skipped {count} unsupported file(s): {names}. This tool accepts {accept}.",
+    noteKeptOriginal:
+      "Already well-optimized — kept your original (it was smaller).",
+    noteLarger: "The {format} version is larger than your original.",
+  },
+  controls: {
+    outputFormat: "Output format",
+    sameFormat: "Same format",
+    quality: "Quality",
+    presetSmallest: "Smallest",
+    presetBalanced: "Balanced",
+    presetHigh: "High quality",
+    qualityHint:
+      "Lower quality = smaller file. 70–80 is usually indistinguishable from the original for photos.",
+    pngLevel: "Optimization level (lossless)",
+    levelFast: "Fast",
+    levelBalanced: "Balanced",
+    levelMax: "Max",
+    pngHint:
+      "PNG optimization is lossless, so savings are modest. For big cuts on photos, convert to WebP or AVIF instead.",
+    resize: "Resize",
+    resizeOff: "Off",
+    resizePercent: "Percent",
+    resizePixels: "Pixels",
+    scale: "Scale",
+    widthPx: "Width (px)",
+    heightPx: "Height (px)",
+    keepAspect: "Keep aspect ratio",
+    imageDropHint: "JPEG, PNG, WebP, AVIF and GIF supported.",
   },
   pages: {
     about: "About",

@@ -1,12 +1,16 @@
 import { ToolCard } from "@/components/tool-card";
 import { TOOLS, type ToolDef } from "@/lib/site-config";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
+import { getT } from "@/lib/i18n/messages";
 
 /** A responsive grid of related tool cards, resolved from slugs. */
 export function RelatedTools({
   slugs,
-  heading = "Related tools",
+  locale = DEFAULT_LOCALE,
+  heading,
 }: {
   slugs: string[];
+  locale?: Locale;
   heading?: string;
 }) {
   const tools = slugs
@@ -20,11 +24,11 @@ export function RelatedTools({
         id="related-tools-heading"
         className="text-2xl font-bold tracking-tight"
       >
-        {heading}
+        {heading ?? getT(locale)("common.relatedHeading")}
       </h2>
       <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {tools.map((tool) => (
-          <ToolCard key={tool.slug} tool={tool} />
+          <ToolCard key={tool.slug} tool={tool} locale={locale} />
         ))}
       </div>
     </section>

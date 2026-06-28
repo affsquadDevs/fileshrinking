@@ -21,6 +21,14 @@ import {
   toolsInCategory,
   type ToolDef,
 } from "@/lib/site-config";
+import {
+  DEFAULT_LOCALE,
+  LOCALE_META,
+  localizePath,
+  type Locale,
+} from "@/lib/i18n/config";
+import { getT } from "@/lib/i18n/messages";
+import { localizedTool } from "@/lib/i18n/content";
 
 export interface ToolFaq {
   q: string;
@@ -33,7 +41,9 @@ export interface ToolFaq {
 export interface ToolPageLayoutProps {
   /** Canonical slug; used to resolve the ToolDef from site-config. */
   slug: string;
-  /** Page H1 (defaults to the tool's title). */
+  /** Active locale (default English). */
+  locale?: Locale;
+  /** Page H1 (defaults to the tool's localized title). */
   heading?: string;
   /** Short intro shown under the H1, above the tool. */
   intro: React.ReactNode;
@@ -52,9 +62,9 @@ export interface ToolPageLayoutProps {
   related?: string[];
 }
 
-function formatDate(iso: string): string {
+function formatDate(iso: string, locale: Locale): string {
   const d = new Date(iso + "T00:00:00Z");
-  return d.toLocaleDateString("en-US", {
+  return d.toLocaleDateString(LOCALE_META[locale].bcp47, {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -64,6 +74,7 @@ function formatDate(iso: string): string {
 
 export function ToolPageLayout({
   slug,
+  locale = DEFAULT_LOCALE,
   heading,
   intro,
   children,
@@ -76,19 +87,22 @@ export function ToolPageLayout({
 }: ToolPageLayoutProps) {
   const tool = getTool(slug) as ToolDef;
   const category = getCategory(tool.category);
-  const title = heading ?? tool.title;
+  const t = getT(locale);
+  const label = localizedTool(slug, locale);
+  const title = heading ?? label.title;
+  const categoryLabel = t(`categories.${tool.category}` as const);
 
   const crumbs: Crumb[] = [
-    { label: "Home", href: "/" },
-    { label: category.label, href: `/${category.hub}` },
-    { label: tool.shortName },
+    { label: t("common.home"), href: localizePath("/", locale) },
+    { label: categoryLabel, href: localizePath(`/${category.hub}`, locale) },
+    { label: label.shortName },
   ];
 
   // Related = explicit prop, else the category hub + siblings (minus self).
   const siblings = (
     related ?? [
       category.hub,
-      ...toolsInCategory(tool.category).map((t) => t.slug),
+      ...toolsInCategory(tool.category).map((tdef) => tdef.slug),
     ]
   )
     .filter((s) => s !== slug)
@@ -96,7 +110,11 @@ export function ToolPageLayout({
 
   return (
     <Container className="py-8 lg:py-10">
-      <Breadcrumbs items={crumbs} className="mb-6" />
+      <Breadcrumbs
+        items={crumbs}
+        className="mb-6"
+        ariaLabel={t("common.breadcrumb")}
+      />
 
       {/* Hero + tool (kept free of ads to respect accidental-click policy) */}
       <header className="mb-8 max-w-3xl">
@@ -107,15 +125,15 @@ export function ToolPageLayout({
           {intro}
         </div>
         <div className="mt-5 flex flex-wrap items-center gap-3">
-          <PrivacyBadge variant="pill" />
+          <PrivacyBadge variant="pill" locale={locale} />
           <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
             <CalendarClock className="size-3.5" aria-hidden="true" />
-            Last updated {formatDate(lastUpdated)}
+            {t("common.lastUpdated", { date: formatDate(lastUpdated, locale) })}
           </span>
         </div>
       </header>
 
-      <section aria-label={`${tool.shortName} tool`} className="mb-12">
+      <section aria-label={label.shortName} className="mb-12">
         {children}
       </section>
 
@@ -145,7 +163,7 @@ export function ToolPageLayout({
 
           <section aria-labelledby="faq-heading" className="mt-12">
             <h2 id="faq-heading" className="text-2xl font-bold tracking-tight">
-              Frequently asked questions
+              {t("common.faqHeading")}
             </h2>
             <FAQ
               className="mt-4"
@@ -164,7 +182,10 @@ export function ToolPageLayout({
       </div>
 
       <div className="mt-14">
-        <RelatedTools slugs={siblings.length ? siblings : [category.hub]} />
+        <RelatedTools
+          slugs={siblings.length ? siblings : [category.hub]}
+          locale={locale}
+        />
       </div>
 
       <div className="mt-12">
@@ -175,14 +196,17 @@ export function ToolPageLayout({
       <JsonLd
         data={[
           softwareApplicationSchema({
-            name: tool.title,
-            description: tool.description,
-            url: `/${tool.slug}`,
+            name: label.title,
+            description: label.description,
+            url: localizePath(`/${tool.slug}`, locale),
           }),
           breadcrumbSchema([
-            { name: "Home", url: "/" },
-            { name: category.label, url: `/${category.hub}` },
-            { name: tool.shortName },
+            { name: t("common.home"), url: localizePath("/", locale) },
+            {
+              name: categoryLabel,
+              url: localizePath(`/${category.hub}`, locale),
+            },
+            { name: label.shortName },
           ]),
           howToSchema({
             name: howTo.name,

@@ -15,12 +15,14 @@ export interface Crumb {
 export function Breadcrumbs({
   items,
   className,
+  ariaLabel = "Breadcrumb",
 }: {
   items: Crumb[];
   className?: string;
+  ariaLabel?: string;
 }) {
   return (
-    <nav aria-label="Breadcrumb" className={cn("text-sm", className)}>
+    <nav aria-label={ariaLabel} className={cn("text-sm", className)}>
       <ol className="flex flex-wrap items-center gap-1.5 text-muted-foreground">
         {items.map((item, i) => {
           const last = i === items.length - 1;

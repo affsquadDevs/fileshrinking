@@ -15,6 +15,7 @@ import { formatBytes, percentSaved } from "@/lib/format";
 import { downloadBlob, downloadAllAsZip } from "@/lib/download";
 import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
+import { useT } from "@/components/i18n/locale-provider";
 
 let idCounter = 0;
 const nextId = () => `f${++idCounter}-${Date.now().toString(36)}`;
@@ -63,6 +64,7 @@ export function ToolShell({
   dropHint,
   className,
 }: ToolShellProps) {
+  const t = useT();
   const [items, setItems] = React.useState<QueuedFile[]>([]);
   const [rejected, setRejected] = React.useState<string[]>([]);
   const [running, setRunning] = React.useState(false);
@@ -243,9 +245,11 @@ export function ToolShell({
       {rejected.length > 0 ? (
         <Alert variant="destructive">
           <AlertDescription>
-            Skipped {rejected.length} unsupported file
-            {rejected.length > 1 ? "s" : ""}: {rejected.join(", ")}. This tool
-            accepts {accept.join(", ")}.
+            {t("tool.skipped", {
+              count: rejected.length,
+              names: rejected.join(", "),
+              accept: accept.join(", "),
+            })}
           </AlertDescription>
         </Alert>
       ) : null}
@@ -262,7 +266,10 @@ export function ToolShell({
             <div className="text-sm text-muted-foreground">
               {done.length > 0 ? (
                 <span>
-                  {done.length} of {items.length} done
+                  {t("tool.doneSummary", {
+                    done: done.length,
+                    total: items.length,
+                  })}
                   {totals.output > 0 && totalSaved > 0 ? (
                     <>
                       {" · "}
@@ -277,7 +284,7 @@ export function ToolShell({
                   ) : null}
                 </span>
               ) : (
-                <span>{items.length} file(s) queued</span>
+                <span>{t("tool.queuedSummary", { count: items.length })}</span>
               )}
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -288,12 +295,12 @@ export function ToolShell({
                 disabled={running}
               >
                 <RotateCcw className="size-4" aria-hidden="true" />
-                Re-compress
+                {t("tool.reCompress")}
               </Button>
               {done.length > 1 ? (
                 <Button size="sm" onClick={onDownloadAll} disabled={running}>
                   <Download className="size-4" aria-hidden="true" />
-                  Download all (.zip)
+                  {t("tool.downloadAll")}
                 </Button>
               ) : null}
               <Button
@@ -303,7 +310,7 @@ export function ToolShell({
                 disabled={running}
               >
                 <Trash2 className="size-4" aria-hidden="true" />
-                Clear
+                {t("tool.clear")}
               </Button>
             </div>
           </div>
@@ -323,8 +330,7 @@ export function ToolShell({
       ) : (
         <p className="flex items-center justify-center gap-2 rounded-lg bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
           <Sparkles className="size-4 text-brand" aria-hidden="true" />
-          Add files above to start. Everything runs locally — your files never
-          leave this device.
+          {t("tool.emptyState")}
         </p>
       )}
     </div>

@@ -4,6 +4,7 @@ export const es: Messages = {
   common: {
     skipToContent: "Saltar al contenido",
     allTools: "Todas las herramientas",
+    openTool: "Abrir herramienta",
     home: "Inicio",
     breadcrumb: "Ruta de navegación",
     privacyBadge: "Los archivos se procesan en tu dispositivo, nunca se suben.",
@@ -71,6 +72,7 @@ export const es: Messages = {
     preparing: "Preparando…",
     compressing: "Comprimiendo…",
     download: "Descargar",
+    remove: "Quitar",
     downloadAll: "Descargar todo (.zip)",
     reCompress: "Volver a comprimir",
     clear: "Limpiar",
@@ -83,6 +85,34 @@ export const es: Messages = {
     queuedSummary: "{count} archivo(s) en cola",
     skipped:
       "Se omitieron {count} archivo(s) no compatibles: {names}. Esta herramienta acepta {accept}.",
+    noteKeptOriginal:
+      "Ya está bien optimizado: conservamos tu original (era más pequeño).",
+    noteLarger: "La versión {format} es más grande que tu original.",
+  },
+  controls: {
+    outputFormat: "Formato de salida",
+    sameFormat: "Mismo formato",
+    quality: "Calidad",
+    presetSmallest: "Mínimo",
+    presetBalanced: "Equilibrado",
+    presetHigh: "Alta calidad",
+    qualityHint:
+      "Menos calidad = archivo más pequeño. 70–80 suele ser indistinguible del original en fotos.",
+    pngLevel: "Nivel de optimización (sin pérdida)",
+    levelFast: "Rápido",
+    levelBalanced: "Equilibrado",
+    levelMax: "Máximo",
+    pngHint:
+      "La optimización de PNG es sin pérdida, así que el ahorro es modesto. Para grandes reducciones en fotos, convierte a WebP o AVIF.",
+    resize: "Redimensionar",
+    resizeOff: "Desactivado",
+    resizePercent: "Porcentaje",
+    resizePixels: "Píxeles",
+    scale: "Escala",
+    widthPx: "Ancho (px)",
+    heightPx: "Alto (px)",
+    keepAspect: "Mantener proporción",
+    imageDropHint: "Compatible con JPEG, PNG, WebP, AVIF y GIF.",
   },
   pages: {
     about: "Quiénes somos",

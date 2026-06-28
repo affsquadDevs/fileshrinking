@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ShieldCheck, Settings2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useT, useLocale } from "@/components/i18n/locale-provider";
+import { localizePath } from "@/lib/i18n/config";
 import {
   ACCEPT_ALL,
   REJECT_ALL,
@@ -59,12 +61,14 @@ function Category({
   checked,
   onChange,
   disabled,
+  alwaysOnLabel,
 }: {
   title: string;
   description: string;
   checked: boolean;
   onChange?: (v: boolean) => void;
   disabled?: boolean;
+  alwaysOnLabel?: string;
 }) {
   return (
     <div className="flex items-start justify-between gap-4 py-3">
@@ -74,7 +78,7 @@ function Category({
       </div>
       {disabled ? (
         <span className="inline-flex items-center gap-1 text-xs font-medium text-brand">
-          <Check className="size-3.5" aria-hidden="true" /> Always on
+          <Check className="size-3.5" aria-hidden="true" /> {alwaysOnLabel ?? "Always on"}
         </span>
       ) : (
         <Toggle
@@ -88,6 +92,8 @@ function Category({
 }
 
 export function ConsentBanner() {
+  const t = useT();
+  const locale = useLocale();
   const [mounted, setMounted] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [showPrefs, setShowPrefs] = React.useState(false);
@@ -142,18 +148,15 @@ export function ConsentBanner() {
               tabIndex={-1}
               className="text-base font-semibold outline-none"
             >
-              We value your privacy
+              {t("consent.title")}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Your files are always processed locally and never uploaded. We use
-              cookies only for anonymous analytics and, with your consent,
-              advertising that keeps these tools free. You can change your choice
-              anytime.{" "}
+              {t("consent.body")}{" "}
               <Link
-                href="/cookie-policy"
+                href={localizePath("/cookie-policy", locale)}
                 className="font-medium text-brand underline-offset-2 hover:underline"
               >
-                Cookie Policy
+                {t("consent.cookiePolicy")}
               </Link>
               .
             </p>
@@ -161,20 +164,21 @@ export function ConsentBanner() {
             {showPrefs ? (
               <div className="mt-4 divide-y divide-border rounded-lg border border-border px-4">
                 <Category
-                  title="Strictly necessary"
-                  description="Required for the site and tools to function. Cannot be turned off."
+                  title={t("consent.necessaryTitle")}
+                  description={t("consent.necessaryBody")}
+                  alwaysOnLabel={t("consent.alwaysOn")}
                   checked
                   disabled
                 />
                 <Category
-                  title="Analytics"
-                  description="Anonymous usage statistics (Google Analytics via Tag Manager) to help us improve."
+                  title={t("consent.analyticsTitle")}
+                  description={t("consent.analyticsBody")}
                   checked={analytics}
                   onChange={setAnalytics}
                 />
                 <Category
-                  title="Advertising"
-                  description="Personalised ads (Google AdSense) that fund free, unlimited tools."
+                  title={t("consent.adsTitle")}
+                  description={t("consent.adsBody")}
                   checked={ads}
                   onChange={setAds}
                 />
@@ -187,7 +191,7 @@ export function ConsentBanner() {
                   onClick={() => choose({ analytics, ads })}
                   className="sm:order-3"
                 >
-                  Save preferences
+                  {t("consent.save")}
                 </Button>
               ) : (
                 <Button
@@ -196,7 +200,7 @@ export function ConsentBanner() {
                   className="sm:order-1"
                 >
                   <Settings2 className="size-4" aria-hidden="true" />
-                  Manage
+                  {t("consent.manage")}
                 </Button>
               )}
               <Button
@@ -204,10 +208,10 @@ export function ConsentBanner() {
                 onClick={() => choose(REJECT_ALL)}
                 className="sm:order-2"
               >
-                Reject all
+                {t("consent.rejectAll")}
               </Button>
               <Button onClick={() => choose(ACCEPT_ALL)} className="sm:order-4">
-                Accept all
+                {t("consent.acceptAll")}
               </Button>
             </div>
           </div>

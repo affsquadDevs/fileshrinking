@@ -4,6 +4,7 @@ import * as React from "react";
 import { UploadCloud } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PrivacyBadge } from "@/components/privacy-badge";
+import { useT, useLocale } from "@/components/i18n/locale-provider";
 
 /**
  * Accessible drag-and-drop + click-to-browse + paste dropzone. Calls onFiles
@@ -25,6 +26,8 @@ export function Dropzone({
   hint?: React.ReactNode;
   className?: string;
 }) {
+  const t = useT();
+  const locale = useLocale();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = React.useState(false);
   const acceptAttr = accept.join(",");
@@ -65,7 +68,7 @@ export function Dropzone({
       role="button"
       tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
-      aria-label="Add files — drag and drop, click to browse, or paste"
+      aria-label={t("tool.dropAria")}
       onClick={open}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -111,13 +114,13 @@ export function Dropzone({
       </span>
       <div>
         <p className="text-base font-medium">
-          {dragging ? "Drop to add files" : "Drag & drop, click, or paste files"}
+          {dragging ? t("tool.dropActive") : t("tool.dropTitle")}
         </p>
         <p className="mt-1 text-sm text-muted-foreground">
-          {hint ?? "Your files stay on your device."}
+          {hint ?? t("tool.dropHintDefault")}
         </p>
       </div>
-      <PrivacyBadge variant="inline" className="mt-1" />
+      <PrivacyBadge variant="inline" className="mt-1" locale={locale} />
     </div>
   );
 }

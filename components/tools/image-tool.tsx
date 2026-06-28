@@ -19,17 +19,19 @@ import {
   type ResizeOptions,
 } from "@/lib/compress/image-types";
 import { withExt } from "@/lib/format";
+import { useT } from "@/components/i18n/locale-provider";
+import type { MessageKey } from "@/lib/i18n/messages";
 
-const QUALITY_PRESETS = [
-  { label: "Smallest", value: 45 },
-  { label: "Balanced", value: 72 },
-  { label: "High quality", value: 88 },
+const QUALITY_PRESETS: { labelKey: MessageKey; value: number }[] = [
+  { labelKey: "controls.presetSmallest", value: 45 },
+  { labelKey: "controls.presetBalanced", value: 72 },
+  { labelKey: "controls.presetHigh", value: 88 },
 ];
 
-const OXIPNG_LEVELS = [
-  { label: "Fast", value: 1 },
-  { label: "Balanced", value: 3 },
-  { label: "Max", value: 6 },
+const OXIPNG_LEVELS: { labelKey: MessageKey; value: number }[] = [
+  { labelKey: "controls.levelFast", value: 1 },
+  { labelKey: "controls.levelBalanced", value: 3 },
+  { labelKey: "controls.levelMax", value: 6 },
 ];
 
 function Segmented<T extends string | number>({
@@ -97,8 +99,9 @@ export function ImageTool({
   showResize = true,
   resizeByDefault = false,
   allowKeep = false,
-  dropHint = "JPEG, PNG, WebP, AVIF and GIF supported.",
+  dropHint,
 }: ImageToolProps) {
+  const t = useT();
   const [target, setTarget] = React.useState<ImageTargetFormat>(defaultTarget);
   const [quality, setQuality] = React.useState(defaultQuality);
   const [oxipngLevel, setOxipngLevel] = React.useState(3);
@@ -112,7 +115,7 @@ export function ImageTool({
 
   const isPngOutput = target === "png";
   const formatOptions: { label: string; value: string }[] = [
-    ...(allowKeep ? [{ label: "Same format", value: "keep" }] : []),
+    ...(allowKeep ? [{ label: t("controls.sameFormat"), value: "keep" }] : []),
     ...outputFormats.map((f) => ({ label: FORMAT_META[f].label, value: f })),
   ];
   const showFormatPicker = formatOptions.length > 1;
@@ -150,24 +153,24 @@ export function ImageTool({
       if (sameFormat && noResize && blob.size >= file.size) {
         blob = file;
         name = file.name;
-        note = "Already well-optimized — kept your original (it was smaller).";
+        note = t("tool.noteKeptOriginal");
       } else if (blob.size >= file.size && noResize) {
-        note = `The ${FORMAT_META[effFormat].label} version is larger than your original.`;
+        note = t("tool.noteLarger", { format: FORMAT_META[effFormat].label });
       }
 
       return { blob, name, width: res.width, height: res.height, note };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [target, quality, oxipngLevel, resizeMode, percentage, rwidth, rheight, keepAspect],
+    [target, quality, oxipngLevel, resizeMode, percentage, rwidth, rheight, keepAspect, t],
   );
 
   const controls = (
     <div className="space-y-5 rounded-xl border border-border bg-card p-5">
       {showFormatPicker ? (
         <div className="space-y-2">
-          <Label>Output format</Label>
+          <Label>{t("controls.outputFormat")}</Label>
           <Segmented
-            ariaLabel="Output format"
+            ariaLabel={t("controls.outputFormat")}
             value={target as string}
             onChange={(v) => setTarget(v as ImageTargetFormat)}
             options={formatOptions}
@@ -178,7 +181,7 @@ export function ImageTool({
       {!isPngOutput ? (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <Label htmlFor={`${toolId}-quality`}>Quality</Label>
+            <Label htmlFor={`${toolId}-quality`}>{t("controls.quality")}</Label>
             <span className="font-mono text-sm tabular-nums text-muted-foreground">
               {quality}
             </span>
@@ -192,7 +195,7 @@ export function ImageTool({
             onValueChange={(v) =>
               setQuality(Array.isArray(v) ? v[0] : (v as number))
             }
-            aria-label="Compression quality"
+            aria-label={t("controls.quality")}
           />
           <div className="flex flex-wrap gap-2">
             {QUALITY_PRESETS.map((p) => (
@@ -203,31 +206,32 @@ export function ImageTool({
                 variant={quality === p.value ? "default" : "outline"}
                 onClick={() => setQuality(p.value)}
               >
-                {p.label}
+                {t(p.labelKey)}
               </Button>
             ))}
           </div>
           <p className="text-xs text-muted-foreground">
-            Lower quality = smaller file. 70–80 is usually indistinguishable from
-            the original for photos.
+            {t("controls.qualityHint")}
           </p>
         </div>
       ) : (
         <div className="space-y-3">
-          <Label>Optimization level (lossless)</Label>
+          <Label>{t("controls.pngLevel")}</Label>
           <Segmented
-            ariaLabel="OxiPNG optimization level"
+            ariaLabel={t("controls.pngLevel")}
             value={oxipngLevel}
             onChange={setOxipngLevel}
-            options={OXIPNG_LEVELS}
+            options={OXIPNG_LEVELS.map((l) => ({
+              label: t(l.labelKey),
+              value: l.value,
+            }))}
           />
           <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
             <Lightbulb
               className="mt-0.5 size-3.5 shrink-0 text-brand"
               aria-hidden="true"
             />
-            PNG optimization is lossless, so savings are modest. For big cuts on
-            photos, convert to WebP or AVIF instead.
+            {t("controls.pngHint")}
           </p>
         </div>
       )}
@@ -235,15 +239,15 @@ export function ImageTool({
       {showResize ? (
         <div className="space-y-3 border-t border-border pt-4">
           <div className="flex items-center justify-between">
-            <Label>Resize</Label>
+            <Label>{t("controls.resize")}</Label>
             <Segmented
-              ariaLabel="Resize mode"
+              ariaLabel={t("controls.resize")}
               value={resizeMode}
               onChange={(v) => setResizeMode(v as ResizeOptions["mode"])}
               options={[
-                { label: "Off", value: "none" },
-                { label: "Percent", value: "percentage" },
-                { label: "Pixels", value: "dimensions" },
+                { label: t("controls.resizeOff"), value: "none" },
+                { label: t("controls.resizePercent"), value: "percentage" },
+                { label: t("controls.resizePixels"), value: "dimensions" },
               ]}
             />
           </div>
@@ -251,7 +255,9 @@ export function ImageTool({
           {resizeMode === "percentage" ? (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Scale</span>
+                <span className="text-sm text-muted-foreground">
+                  {t("controls.scale")}
+                </span>
                 <span className="font-mono text-sm tabular-nums text-muted-foreground">
                   {percentage}%
                 </span>
@@ -264,7 +270,7 @@ export function ImageTool({
                 onValueChange={(v) =>
                   setPercentage(Array.isArray(v) ? v[0] : (v as number))
                 }
-                aria-label="Resize percentage"
+                aria-label={t("controls.scale")}
               />
             </div>
           ) : null}
@@ -273,7 +279,7 @@ export function ImageTool({
             <div className="flex flex-wrap items-end gap-3">
               <div className="space-y-1">
                 <Label htmlFor={`${toolId}-w`} className="text-xs">
-                  Width (px)
+                  {t("controls.widthPx")}
                 </Label>
                 <Input
                   id={`${toolId}-w`}
@@ -288,7 +294,7 @@ export function ImageTool({
               </div>
               <div className="space-y-1">
                 <Label htmlFor={`${toolId}-h`} className="text-xs">
-                  Height (px)
+                  {t("controls.heightPx")}
                 </Label>
                 <Input
                   id={`${toolId}-h`}
@@ -308,7 +314,7 @@ export function ImageTool({
                   onChange={(e) => setKeepAspect(e.target.checked)}
                   className="size-4 accent-[var(--brand)]"
                 />
-                Keep aspect ratio
+                {t("controls.keepAspect")}
               </label>
             </div>
           ) : null}
@@ -326,7 +332,7 @@ export function ImageTool({
       controls={controls}
       showDimensions
       imagePreviews
-      dropHint={dropHint}
+      dropHint={dropHint ?? t("controls.imageDropHint")}
     />
   );
 }

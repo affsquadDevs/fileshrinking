@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { formatBytes, percentSaved } from "@/lib/format";
+import { useT } from "@/components/i18n/locale-provider";
 import type { QueuedFile } from "@/components/tools/types";
 
 export function ResultCard({
@@ -27,6 +28,7 @@ export function ResultCard({
   onDownload: (item: QueuedFile) => void;
   showDimensions?: boolean;
 }) {
+  const t = useT();
   const saved =
     item.resultSize != null
       ? percentSaved(item.originalSize, item.resultSize)
@@ -60,17 +62,17 @@ export function ResultCard({
           <div className="mt-1.5">
             <Progress
               value={Math.round(item.progress * 100)}
-              aria-label={`Compressing ${item.file.name}`}
+              aria-label={`${t("tool.compressing")} ${item.file.name}`}
             />
             <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
               <Loader2 className="size-3 animate-spin" aria-hidden="true" />
-              {item.progress < 0.1 ? "Preparing…" : "Compressing…"}
+              {item.progress < 0.1 ? t("tool.preparing") : t("tool.compressing")}
             </p>
           </div>
         ) : item.status === "error" ? (
           <p className="mt-1 flex items-center gap-1 text-xs text-destructive">
             <AlertCircle className="size-3.5 shrink-0" aria-hidden="true" />
-            {item.error ?? "Something went wrong."}
+            {item.error ?? t("tool.failed")}
           </p>
         ) : item.status === "done" ? (
           <div className="mt-1 space-y-0.5">
@@ -89,7 +91,7 @@ export function ResultCard({
                       : "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
                   )}
                 >
-                  {grew ? "no gain" : `−${saved}%`}
+                  {grew ? t("tool.noGain") : `−${saved}%`}
                 </span>
               ) : null}
             </p>
@@ -107,7 +109,7 @@ export function ResultCard({
           </div>
         ) : (
           <p className="mt-1 text-xs text-muted-foreground">
-            {formatBytes(item.originalSize)} · queued
+            {formatBytes(item.originalSize)} · {t("tool.queued")}
           </p>
         )}
       </div>
@@ -119,10 +121,10 @@ export function ResultCard({
             size="sm"
             variant="secondary"
             onClick={() => onDownload(item)}
-            aria-label={`Download ${item.resultName ?? item.file.name}`}
+            aria-label={`${t("tool.download")} ${item.resultName ?? item.file.name}`}
           >
             <Download className="size-4" aria-hidden="true" />
-            <span className="hidden sm:inline">Download</span>
+            <span className="hidden sm:inline">{t("tool.download")}</span>
           </Button>
         ) : item.status === "done" ? (
           <CheckCircle2
@@ -134,7 +136,7 @@ export function ResultCard({
           size="icon"
           variant="ghost"
           onClick={() => onRemove(item.id)}
-          aria-label={`Remove ${item.file.name}`}
+          aria-label={`${t("tool.remove")} ${item.file.name}`}
         >
           <X className="size-4" aria-hidden="true" />
         </Button>
