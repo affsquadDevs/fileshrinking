@@ -31,10 +31,13 @@ export const SITE = {
   // Pre-supplied, already-wired identifiers
   adsensePublisherId: "ca-pub-2980943706375055",
   gtmContainerId: "GTM-MNLGFCTM",
+  // Public, open-source repository (MIT licensed).
+  repoUrl: "https://github.com/affsquadDevs/fileshrinking",
+  license: "MIT",
   // Social profiles for Organization.sameAs — [FILL IN] real URLs
   social: {
     twitter: "https://twitter.com/fileshrinking",
-    github: "https://github.com/fileshrinking",
+    github: "https://github.com/affsquadDevs/fileshrinking",
   },
   twitterHandle: "@fileshrinking",
 } as const;

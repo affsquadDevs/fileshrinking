@@ -62,6 +62,16 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <a
+                  href={SITE.repoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={linkCls}
+                >
+                  Open source ↗
+                </a>
+              </li>
             </ul>
           </nav>
 

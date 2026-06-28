@@ -11,6 +11,9 @@ import * as howToCompressVideoForEmailAndWeb from "@/components/blog/posts/how-t
 import * as bestImageFormatsForTheWeb2026 from "@/components/blog/posts/best-image-formats-for-the-web-2026";
 import * as whatIsWebp from "@/components/blog/posts/what-is-webp-and-should-you-use-it";
 import * as howToCompressAudioFiles from "@/components/blog/posts/how-to-compress-audio-files";
+import * as howClientSideCompressionWorks from "@/components/blog/posts/how-client-side-file-compression-works";
+import * as isItSafeToCompressFilesOnline from "@/components/blog/posts/is-it-safe-to-compress-files-online";
+import * as mp4VsWebmVsMovVsMkv from "@/components/blog/posts/mp4-vs-webm-vs-mov-vs-mkv";
 
 const MODULES: BlogPostModule[] = [
   lossyVsLossless,
@@ -21,6 +24,9 @@ const MODULES: BlogPostModule[] = [
   bestImageFormatsForTheWeb2026,
   whatIsWebp,
   howToCompressAudioFiles,
+  howClientSideCompressionWorks,
+  isItSafeToCompressFilesOnline,
+  mp4VsWebmVsMovVsMkv,
 ].map((m) => m as unknown as BlogPostModule);
 
 export const POSTS: BlogPost[] = MODULES.map((m) => ({

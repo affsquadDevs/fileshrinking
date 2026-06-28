@@ -8,15 +8,21 @@ import {
   Upload,
   Settings2,
   Download,
+  Code2,
+  Eye,
+  Scale,
+  Server,
 } from "lucide-react";
 
 import { Container } from "@/components/layout/container";
 import { Section, SectionHeader } from "@/components/layout/section";
 import { LinkButton } from "@/components/link-button";
+import { buttonVariants } from "@/components/ui/button";
 import { ToolCard } from "@/components/tool-card";
 import { PrivacyBadge } from "@/components/privacy-badge";
 import { FAQ } from "@/components/faq";
-import { TOOL_CATEGORIES, TOOLS } from "@/lib/site-config";
+import { cn } from "@/lib/utils";
+import { SITE, TOOL_CATEGORIES, TOOLS } from "@/lib/site-config";
 
 const FEATURES = [
   {
@@ -83,6 +89,10 @@ const FAQ_ITEMS = [
   {
     q: "Do you store or track my files?",
     a: "We can't. Files never leave your browser, so we have no copy of them and no ability to access them. We use privacy-respecting analytics only after you consent, and you can change your consent choices at any time from the footer.",
+  },
+  {
+    q: "Is FileShrinking open source?",
+    a: "Yes — FileShrinking is fully open source under the MIT license. The entire codebase is public on GitHub, so anyone can inspect exactly how it works, confirm that no files are uploaded, fork it, or even self-host their own private copy.",
   },
 ];
 
@@ -240,6 +250,59 @@ export default function HomePage() {
             </li>
           ))}
         </ol>
+      </Section>
+
+      {/* Open source */}
+      <Section className="border-t border-border/60">
+        <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-brand/20 bg-brand/5 p-8 text-center sm:p-12">
+          <span className="mx-auto flex size-12 items-center justify-center rounded-xl bg-brand/10 text-brand">
+            <Code2 className="size-6" aria-hidden="true" />
+          </span>
+          <h2 className="mt-5 text-balance text-3xl font-bold tracking-tight">
+            Fully open source
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-pretty text-lg text-muted-foreground">
+            Don&rsquo;t just take our word for it. FileShrinking is 100% open
+            source under the {SITE.license} license — the entire codebase is
+            public, so anyone can verify that your files never leave your device.
+          </p>
+          <div className="mx-auto mt-8 grid max-w-xl gap-4 text-left sm:grid-cols-3">
+            {[
+              {
+                icon: Eye,
+                title: "Auditable",
+                body: "Read the code that runs in your browser. No hidden uploads, no tracking of your files.",
+              },
+              {
+                icon: Scale,
+                title: `${SITE.license} licensed`,
+                body: "Free to use, fork, and build on — for personal or commercial projects.",
+              },
+              {
+                icon: Server,
+                title: "Self-hostable",
+                body: "Clone it and run your own private instance anywhere you like.",
+              },
+            ].map((p) => (
+              <div key={p.title}>
+                <p.icon className="size-5 text-brand" aria-hidden="true" />
+                <h3 className="mt-2 text-sm font-semibold">{p.title}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{p.body}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8">
+            <a
+              href={SITE.repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(buttonVariants({ size: "lg" }))}
+            >
+              <Code2 className="size-4" aria-hidden="true" />
+              View the source on GitHub
+            </a>
+          </div>
+        </div>
       </Section>
 
       {/* FAQ */}
