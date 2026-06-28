@@ -11,7 +11,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/_next/"],
       },
     ],
-    sitemap: `${SITE.url}/sitemap.xml`,
+    sitemap: [`${SITE.url}/sitemap.xml`, `${SITE.url}/sitemap.txt`],
     host: SITE.url,
   };
 }
