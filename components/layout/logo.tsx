@@ -1,7 +1,11 @@
+"use client";
+
 import * as React from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { SITE } from "@/lib/site-config";
+import { localizePath } from "@/lib/i18n/config";
+import { useLocale } from "@/components/i18n/locale-provider";
 
 /**
  * Inline SVG wordmark + glyph. The glyph is a stylised "shrink" — two arrows
@@ -44,9 +48,10 @@ export function LogoMark({ className }: { className?: string }) {
 }
 
 export function Logo({ className }: { className?: string }) {
+  const locale = useLocale();
   return (
     <Link
-      href="/"
+      href={localizePath("/", locale)}
       className={cn(
         "flex items-center gap-2 font-semibold tracking-tight",
         "rounded-md focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2",

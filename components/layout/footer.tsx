@@ -12,12 +12,19 @@ import {
   COMPANY_LINKS,
   LEGAL_LINKS,
 } from "@/lib/site-config";
+import { DEFAULT_LOCALE, localizePath, type Locale } from "@/lib/i18n/config";
+import { getT, type MessageKey } from "@/lib/i18n/messages";
+import { localizedTool } from "@/lib/i18n/content";
 
 const linkCls =
   "text-sm text-muted-foreground transition-colors hover:text-foreground";
 
-export function Footer() {
-  const year = SITE.foundingYear; // build-time constant; range rendered below
+export function Footer({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
+  const t = getT(locale);
+  const lp = (href: string) => localizePath(href, locale);
+  const pageLabel = (href: string) =>
+    t(`pages.${href.replace(/^\//, "")}` as MessageKey);
+
   return (
     <footer className="mt-auto border-t border-border/60 bg-muted/30">
       <Container className="py-12">
@@ -25,41 +32,43 @@ export function Footer() {
           <div className="space-y-4">
             <Logo />
             <p className="max-w-xs text-sm text-muted-foreground">
-              {SITE.tagline}. Compress images, PDFs, video and audio without
-              ever uploading a file.
+              {t("footer.tagline")}
             </p>
-            <PrivacyBadge variant="pill" />
+            <PrivacyBadge variant="pill" locale={locale} />
           </div>
 
-          {TOOL_CATEGORIES.map((cat) => (
-            <nav key={cat.id} aria-label={cat.label}>
-              <h2 className="mb-3 text-sm font-semibold">{cat.label}</h2>
-              <ul className="space-y-2">
-                <li>
-                  <Link href={`/${cat.hub}`} className={linkCls}>
-                    All {cat.label.toLowerCase()}
-                  </Link>
-                </li>
-                {toolsInCategory(cat.id).map((tool) => (
-                  <li key={tool.slug}>
-                    <Link href={`/${tool.slug}`} className={linkCls}>
-                      {tool.shortName}
+          {TOOL_CATEGORIES.map((cat) => {
+            const catLabel = t(`categories.${cat.id}` as const);
+            return (
+              <nav key={cat.id} aria-label={catLabel}>
+                <h2 className="mb-3 text-sm font-semibold">{catLabel}</h2>
+                <ul className="space-y-2">
+                  <li>
+                    <Link href={lp(`/${cat.hub}`)} className={linkCls}>
+                      {t("nav.allIn", { category: catLabel.toLowerCase() })}
                     </Link>
                   </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
+                  {toolsInCategory(cat.id).map((tool) => (
+                    <li key={tool.slug}>
+                      <Link href={lp(`/${tool.slug}`)} className={linkCls}>
+                        {localizedTool(tool.slug, locale).shortName}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            );
+          })}
         </div>
 
         <div className="mt-10 grid gap-8 border-t border-border/60 pt-8 sm:grid-cols-2 lg:grid-cols-4">
-          <nav aria-label="Company">
-            <h2 className="mb-3 text-sm font-semibold">Company</h2>
+          <nav aria-label={t("footer.company")}>
+            <h2 className="mb-3 text-sm font-semibold">{t("footer.company")}</h2>
             <ul className="space-y-2">
               {COMPANY_LINKS.map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className={linkCls}>
-                    {l.label}
+                  <Link href={lp(l.href)} className={linkCls}>
+                    {pageLabel(l.href)}
                   </Link>
                 </li>
               ))}
@@ -71,49 +80,48 @@ export function Footer() {
                   className={`${linkCls} inline-flex items-center gap-1.5`}
                 >
                   <GithubMark className="size-3.5" />
-                  Open source
+                  {t("common.openSource")}
                 </a>
               </li>
             </ul>
           </nav>
 
-          <nav aria-label="Legal">
-            <h2 className="mb-3 text-sm font-semibold">Legal</h2>
+          <nav aria-label={t("footer.legal")}>
+            <h2 className="mb-3 text-sm font-semibold">{t("footer.legal")}</h2>
             <ul className="space-y-2">
               {LEGAL_LINKS.map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className={linkCls}>
-                    {l.label}
+                  <Link href={lp(l.href)} className={linkCls}>
+                    {pageLabel(l.href)}
                   </Link>
                 </li>
               ))}
               <li>
                 <ConsentSettingsButton className={linkCls}>
-                  Consent settings
+                  {t("footer.consentSettings")}
                 </ConsentSettingsButton>
               </li>
             </ul>
           </nav>
 
           <div className="sm:col-span-2 lg:col-span-2">
-            <h2 className="mb-3 text-sm font-semibold">How it works</h2>
+            <h2 className="mb-3 text-sm font-semibold">
+              {t("footer.howItWorks")}
+            </h2>
             <p className="text-sm text-muted-foreground">
-              Every tool runs entirely in your browser using WebAssembly and
-              modern web APIs. Your files are read into memory on your device,
-              compressed locally, and offered back to you for download. Nothing
-              is sent to a server — which is faster, more private, and works
-              even offline once loaded.
+              {t("footer.howItWorksBody")}
             </p>
           </div>
         </div>
 
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border/60 pt-6 text-sm text-muted-foreground sm:flex-row">
           <p>
-            © {year}–present {SITE.publisher}. All rights reserved.
+            {t("footer.rightsReserved", {
+              year: SITE.foundingYear,
+              publisher: SITE.publisher,
+            })}
           </p>
-          <p>
-            Made for people who value their privacy. No uploads, ever.
-          </p>
+          <p>{t("footer.madeFor")}</p>
         </div>
       </Container>
     </footer>

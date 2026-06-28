@@ -8,6 +8,9 @@ import { cn } from "@/lib/utils";
 import { Container } from "@/components/layout/container";
 import { Logo } from "@/components/layout/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSwitcher } from "@/components/i18n/language-switcher";
+import { useT, useLocale } from "@/components/i18n/locale-provider";
+import { localizePath } from "@/lib/i18n/config";
 import { buttonVariants } from "@/components/ui/button";
 import { LinkButton } from "@/components/link-button";
 import {
@@ -32,32 +35,48 @@ import {
   getCategory,
   type ToolCategoryId,
 } from "@/lib/site-config";
+import { localizedTool } from "@/lib/i18n/content";
 import { getIcon } from "@/lib/icons";
+import type { TFunction } from "@/lib/i18n/messages";
+import type { Locale } from "@/lib/i18n/config";
 
-function MegaMenuList({ category }: { category: ToolCategoryId }) {
+function MegaMenuList({
+  category,
+  t,
+  locale,
+}: {
+  category: ToolCategoryId;
+  t: TFunction;
+  locale: Locale;
+}) {
   const cat = getCategory(category);
   const HubIcon = getIcon(cat.icon);
   const tools = toolsInCategory(category);
+  const lp = (href: string) => localizePath(href, locale);
+  const catLabel = t(`categories.${category}` as const);
   return (
     <ul className="grid w-[min(92vw,560px)] gap-1 p-2 sm:grid-cols-2">
       <li className="sm:col-span-2">
         <NavigationMenuLink
-          render={<Link href={`/${cat.hub}`} />}
+          render={<Link href={lp(`/${cat.hub}`)} />}
           className="flex flex-col gap-1 rounded-md bg-accent/60 p-3 hover:bg-accent"
         >
           <span className="flex items-center gap-2 font-medium">
             <HubIcon className="size-4 text-brand" aria-hidden="true" />
-            {cat.label}
+            {catLabel}
           </span>
-          <span className="text-xs text-muted-foreground">{cat.blurb}</span>
+          <span className="text-xs text-muted-foreground">
+            {localizedTool(cat.hub, locale).description}
+          </span>
         </NavigationMenuLink>
       </li>
       {tools.map((tool) => {
         const Icon = getIcon(tool.icon);
+        const lt = localizedTool(tool.slug, locale);
         return (
           <li key={tool.slug}>
             <NavigationMenuLink
-              render={<Link href={`/${tool.slug}`} />}
+              render={<Link href={lp(`/${tool.slug}`)} />}
               className="flex items-start gap-2.5"
             >
               <Icon
@@ -66,10 +85,10 @@ function MegaMenuList({ category }: { category: ToolCategoryId }) {
               />
               <span className="flex flex-col">
                 <span className="text-sm font-medium leading-tight">
-                  {tool.title}
+                  {lt.title}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  {tool.description}
+                  {lt.description}
                 </span>
               </span>
             </NavigationMenuLink>
@@ -80,48 +99,49 @@ function MegaMenuList({ category }: { category: ToolCategoryId }) {
   );
 }
 
-function DesktopNav() {
+function DesktopNav({ t, locale }: { t: TFunction; locale: Locale }) {
+  const lp = (href: string) => localizePath(href, locale);
   return (
     <NavigationMenu className="hidden lg:flex">
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Image</NavigationMenuTrigger>
+          <NavigationMenuTrigger>{t("nav.image")}</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <MegaMenuList category="image" />
+            <MegaMenuList category="image" t={t} locale={locale} />
           </NavigationMenuContent>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
           <NavigationMenuLink
-            render={<Link href="/pdf-compressor" />}
+            render={<Link href={lp("/pdf-compressor")} />}
             className="px-2.5 py-1.5 font-medium"
           >
-            PDF
+            {t("nav.pdf")}
           </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Video</NavigationMenuTrigger>
+          <NavigationMenuTrigger>{t("nav.video")}</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <MegaMenuList category="video" />
+            <MegaMenuList category="video" t={t} locale={locale} />
           </NavigationMenuContent>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
           <NavigationMenuLink
-            render={<Link href="/audio-compressor" />}
+            render={<Link href={lp("/audio-compressor")} />}
             className="px-2.5 py-1.5 font-medium"
           >
-            Audio
+            {t("nav.audio")}
           </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
           <NavigationMenuLink
-            render={<Link href="/blog" />}
+            render={<Link href={lp("/blog")} />}
             className="px-2.5 py-1.5 font-medium"
           >
-            Blog
+            {t("nav.blog")}
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
@@ -129,12 +149,13 @@ function DesktopNav() {
   );
 }
 
-function MobileNav() {
+function MobileNav({ t, locale }: { t: TFunction; locale: Locale }) {
   const [open, setOpen] = React.useState(false);
+  const lp = (href: string) => localizePath(href, locale);
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
-        aria-label="Open menu"
+        aria-label={t("nav.openMenu")}
         className={cn(
           buttonVariants({ variant: "ghost", size: "icon" }),
           "lg:hidden",
@@ -148,38 +169,39 @@ function MobileNav() {
             <Logo />
           </SheetTitle>
         </SheetHeader>
-        <nav className="px-4 pb-8" aria-label="Mobile">
+        <nav className="px-4 pb-8" aria-label={t("nav.menu")}>
           <Accordion multiple className="w-full">
             {TOOL_CATEGORIES.map((cat) => {
               const tools = toolsInCategory(cat.id);
               const CatIcon = getIcon(cat.icon);
+              const catLabel = t(`categories.${cat.id}` as const);
               return (
                 <AccordionItem value={cat.id} key={cat.id}>
                   <AccordionTrigger className="text-base">
                     <span className="flex items-center gap-2">
                       <CatIcon className="size-4 text-brand" aria-hidden="true" />
-                      {cat.label}
+                      {catLabel}
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
                     <ul className="flex flex-col gap-1 pl-6">
                       <li>
                         <Link
-                          href={`/${cat.hub}`}
+                          href={lp(`/${cat.hub}`)}
                           onClick={() => setOpen(false)}
                           className="block rounded-md px-2 py-2 text-sm font-medium hover:bg-muted"
                         >
-                          All {cat.label.toLowerCase()}
+                          {t("nav.allIn", { category: catLabel.toLowerCase() })}
                         </Link>
                       </li>
                       {tools.map((tool) => (
                         <li key={tool.slug}>
                           <Link
-                            href={`/${tool.slug}`}
+                            href={lp(`/${tool.slug}`)}
                             onClick={() => setOpen(false)}
                             className="block rounded-md px-2 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
                           >
-                            {tool.title}
+                            {localizedTool(tool.slug, locale).title}
                           </Link>
                         </li>
                       ))}
@@ -190,18 +212,18 @@ function MobileNav() {
             })}
           </Accordion>
           <Link
-            href="/blog"
+            href={lp("/blog")}
             onClick={() => setOpen(false)}
             className="mt-2 block rounded-md px-2 py-3 text-base font-medium hover:bg-muted"
           >
-            Blog
+            {t("nav.blog")}
           </Link>
           <Link
-            href="/about"
+            href={lp("/about")}
             onClick={() => setOpen(false)}
             className="block rounded-md px-2 py-3 text-base font-medium hover:bg-muted"
           >
-            About
+            {t("nav.about")}
           </Link>
         </nav>
       </SheetContent>
@@ -210,24 +232,27 @@ function MobileNav() {
 }
 
 export function Header() {
+  const t = useT();
+  const locale = useLocale();
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <Container className="flex h-16 items-center justify-between gap-4">
         <div className="flex items-center gap-6">
           <Logo />
-          <DesktopNav />
+          <DesktopNav t={t} locale={locale} />
         </div>
         <div className="flex items-center gap-1">
           <LinkButton
-            href="/image-compressor"
+            href={localizePath("/image-compressor", locale)}
             variant="ghost"
             size="sm"
             className="hidden sm:inline-flex"
           >
-            All tools
+            {t("common.allTools")}
           </LinkButton>
+          <LanguageSwitcher />
           <ThemeToggle />
-          <MobileNav />
+          <MobileNav t={t} locale={locale} />
         </div>
       </Container>
     </header>

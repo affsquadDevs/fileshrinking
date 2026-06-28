@@ -1,20 +1,27 @@
 import * as React from "react";
 import { ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
+import { getT } from "@/lib/i18n/messages";
 
 /**
  * The site's core trust signal: files never leave the device. Used near every
  * dropzone and across content pages. `variant` controls visual weight.
+ * Pure function (no hooks), so it renders in both server and client contexts;
+ * pass `locale` to localize the default text.
  */
 export function PrivacyBadge({
   className,
   variant = "soft",
-  children = "Files are processed on your device — never uploaded.",
+  locale = DEFAULT_LOCALE,
+  children,
 }: {
   className?: string;
   variant?: "soft" | "inline" | "pill";
+  locale?: Locale;
   children?: React.ReactNode;
 }) {
+  const content = children ?? getT(locale)("common.privacyBadge");
   if (variant === "pill") {
     return (
       <span
@@ -24,7 +31,7 @@ export function PrivacyBadge({
         )}
       >
         <ShieldCheck className="size-3.5" aria-hidden="true" />
-        {children}
+        {content}
       </span>
     );
   }
@@ -38,7 +45,7 @@ export function PrivacyBadge({
         )}
       >
         <ShieldCheck className="size-4 text-brand" aria-hidden="true" />
-        {children}
+        {content}
       </span>
     );
   }
@@ -51,7 +58,7 @@ export function PrivacyBadge({
       )}
     >
       <ShieldCheck className="size-5 shrink-0 text-brand" aria-hidden="true" />
-      <span>{children}</span>
+      <span>{content}</span>
     </div>
   );
 }

@@ -1,0 +1,106 @@
+import type { Messages } from "@/lib/i18n/messages/en";
+
+export const es: Messages = {
+  common: {
+    skipToContent: "Saltar al contenido",
+    allTools: "Todas las herramientas",
+    home: "Inicio",
+    breadcrumb: "Ruta de navegación",
+    privacyBadge: "Los archivos se procesan en tu dispositivo, nunca se suben.",
+    privacyBadgeShort: "Sin subidas · Los archivos permanecen en tu dispositivo",
+    openSource: "Código abierto",
+    lastUpdated: "Actualizado el {date}",
+    faqHeading: "Preguntas frecuentes",
+    relatedHeading: "Herramientas relacionadas",
+    advertisement: "Publicidad",
+  },
+  nav: {
+    image: "Imagen",
+    pdf: "PDF",
+    video: "Vídeo",
+    audio: "Audio",
+    blog: "Blog",
+    about: "Quiénes somos",
+    openMenu: "Abrir menú",
+    menu: "Menú",
+    allIn: "Todas las {category}",
+  },
+  categories: {
+    image: "Herramientas de imagen",
+    pdf: "Herramientas de PDF",
+    video: "Herramientas de vídeo",
+    audio: "Herramientas de audio",
+  },
+  footer: {
+    tagline:
+      "Compresión de archivos gratuita y privada en tu navegador. Comprime imágenes, PDF, vídeo y audio sin subir nunca un archivo.",
+    company: "Empresa",
+    legal: "Legal",
+    howItWorks: "Cómo funciona",
+    howItWorksBody:
+      "Cada herramienta se ejecuta por completo en tu navegador usando WebAssembly y APIs web modernas. Tus archivos se leen en la memoria de tu dispositivo, se comprimen localmente y se te devuelven para descargar. No se envía nada a ningún servidor, lo que es más rápido, más privado y funciona incluso sin conexión una vez cargada la página.",
+    consentSettings: "Configuración de consentimiento",
+    rightsReserved: "© {year}–presente {publisher}. Todos los derechos reservados.",
+    madeFor: "Hecho para quienes valoran su privacidad. Sin subidas, nunca.",
+    language: "Idioma",
+  },
+  consent: {
+    title: "Valoramos tu privacidad",
+    body: "Tus archivos siempre se procesan localmente y nunca se suben. Usamos cookies solo para analíticas anónimas y, con tu consentimiento, para publicidad que mantiene estas herramientas gratuitas. Puedes cambiar tu elección cuando quieras.",
+    cookiePolicy: "Política de cookies",
+    manage: "Gestionar",
+    rejectAll: "Rechazar todo",
+    acceptAll: "Aceptar todo",
+    save: "Guardar preferencias",
+    alwaysOn: "Siempre activo",
+    necessaryTitle: "Estrictamente necesarias",
+    necessaryBody:
+      "Necesarias para que el sitio y las herramientas funcionen. No se pueden desactivar.",
+    analyticsTitle: "Analíticas",
+    analyticsBody:
+      "Estadísticas de uso anónimas (Google Analytics mediante Tag Manager) para ayudarnos a mejorar.",
+    adsTitle: "Publicidad",
+    adsBody:
+      "Anuncios personalizados (Google AdSense) que financian herramientas gratuitas e ilimitadas.",
+  },
+  tool: {
+    dropTitle: "Arrastra y suelta, haz clic o pega archivos",
+    dropActive: "Suelta para añadir archivos",
+    dropHintDefault: "Tus archivos permanecen en tu dispositivo.",
+    dropAria: "Añadir archivos: arrastra y suelta, haz clic para explorar o pega",
+    preparing: "Preparando…",
+    compressing: "Comprimiendo…",
+    download: "Descargar",
+    downloadAll: "Descargar todo (.zip)",
+    reCompress: "Volver a comprimir",
+    clear: "Limpiar",
+    noGain: "sin mejora",
+    queued: "en cola",
+    failed: "Error al comprimir.",
+    emptyState:
+      "Añade archivos arriba para empezar. Todo se ejecuta localmente: tus archivos nunca salen de este dispositivo.",
+    doneSummary: "{done} de {total} listos",
+    queuedSummary: "{count} archivo(s) en cola",
+    skipped:
+      "Se omitieron {count} archivo(s) no compatibles: {names}. Esta herramienta acepta {accept}.",
+  },
+  pages: {
+    about: "Quiénes somos",
+    contact: "Contacto",
+    blog: "Blog",
+    "privacy-policy": "Política de privacidad",
+    "terms-of-service": "Términos del servicio",
+    "cookie-policy": "Política de cookies",
+    disclaimer: "Aviso legal",
+  },
+  langSwitcher: {
+    label: "Cambiar idioma",
+  },
+  notFound: {
+    code: "404",
+    title: "No pudimos encontrar esa página",
+    body: "Puede que la página se haya movido o que nunca existiera. Prueba una de nuestras herramientas de compresión más abajo o vuelve al inicio.",
+    goHome: "Ir al inicio",
+    browseTools: "Ver todas las herramientas",
+  },
+};
