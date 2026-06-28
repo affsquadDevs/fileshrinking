@@ -84,6 +84,8 @@ export interface ImageToolProps {
   resizeByDefault?: boolean;
   /** Add a "Same format" (keep) option to the format picker. */
   allowKeep?: boolean;
+  /** Override the dropzone hint text (supported input formats). */
+  dropHint?: React.ReactNode;
 }
 
 export function ImageTool({
@@ -95,6 +97,7 @@ export function ImageTool({
   showResize = true,
   resizeByDefault = false,
   allowKeep = false,
+  dropHint = "JPEG, PNG, WebP, AVIF and GIF supported.",
 }: ImageToolProps) {
   const [target, setTarget] = React.useState<ImageTargetFormat>(defaultTarget);
   const [quality, setQuality] = React.useState(defaultQuality);
@@ -323,7 +326,7 @@ export function ImageTool({
       controls={controls}
       showDimensions
       imagePreviews
-      dropHint="JPEG, PNG, WebP, AVIF and GIF supported."
+      dropHint={dropHint}
     />
   );
 }

@@ -22,10 +22,71 @@ import {
 
 type ProgressFn = (value: number) => void;
 
+/** Sniff the ISO-BMFF `ftyp` brand to detect HEIC/HEIF regardless of MIME
+ *  (Chrome reports an empty type for .heic files). */
+function isHeif(buffer: ArrayBuffer): boolean {
+  if (buffer.byteLength < 12) return false;
+  const b = new Uint8Array(buffer, 0, 12);
+  if (b[4] !== 0x66 || b[5] !== 0x74 || b[6] !== 0x79 || b[7] !== 0x70) {
+    return false; // bytes 4–7 must be "ftyp"
+  }
+  const brand = String.fromCharCode(b[8], b[9], b[10], b[11]);
+  return [
+    "heic", "heix", "hevc", "heim", "heis", "hevm", "hevs", "mif1", "msf1", "heif",
+  ].includes(brand);
+}
+
+interface HeifImage {
+  get_width(): number;
+  get_height(): number;
+  display(data: ImageData, cb: (d: ImageData | null) => void): void;
+  free?: () => void;
+}
+interface LibheifModule {
+  HeifDecoder: new () => { decode(data: Uint8Array): HeifImage[] };
+}
+
+/** Decode HEIC/HEIF via libheif (WASM). Browsers other than Safari can't decode
+ *  these natively, and jSquash has no HEIC codec. Loaded lazily, only when a
+ *  HEIC file is actually processed. */
+async function decodeHeif(buffer: ArrayBuffer): Promise<ImageData> {
+  const mod = await import("libheif-js/wasm-bundle");
+  const libheif = ((mod as { default?: LibheifModule }).default ??
+    (mod as unknown as LibheifModule)) as LibheifModule;
+
+  const images = new libheif.HeifDecoder().decode(new Uint8Array(buffer));
+  if (!images || images.length === 0) {
+    throw new Error("Could not read this HEIC/HEIF file — it may be corrupt.");
+  }
+  const image = images[0];
+  const width = image.get_width();
+  const height = image.get_height();
+  const imageData = new ImageData(width, height);
+  await new Promise<void>((resolve, reject) => {
+    image.display(imageData, (displayData) => {
+      if (!displayData) reject(new Error("Could not decode this HEIC/HEIF image."));
+      else resolve();
+    });
+  });
+  image.free?.();
+  return imageData;
+}
+
 async function decodeImage(
   buffer: ArrayBuffer,
   mime: string,
 ): Promise<ImageData> {
+  // HEIC/HEIF: route to libheif up front when detected (most browsers can't
+  // decode it, and Safari's native path would still work via createImageBitmap).
+  if (mime === "image/heic" || mime === "image/heif" || isHeif(buffer)) {
+    try {
+      return await decodeHeif(buffer);
+    } catch (e) {
+      // Fall through to the browser path (e.g. Safari can decode HEIC natively).
+      void e;
+    }
+  }
+
   const blob = new Blob([buffer], { type: mime || "application/octet-stream" });
   try {
     const bitmap = await createImageBitmap(blob);

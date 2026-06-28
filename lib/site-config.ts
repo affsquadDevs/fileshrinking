@@ -171,6 +171,17 @@ export const TOOLS: ToolDef[] = [
     keyword: "compress gif",
   },
   {
+    slug: "compress-heic",
+    title: "HEIC Compressor & Converter",
+    shortName: "HEIC",
+    description:
+      "Convert iPhone HEIC/HEIF photos to JPEG, WebP or AVIF and shrink them.",
+    icon: "Image",
+    accept: ["image/heic", "image/heif", ".heic", ".heif"],
+    category: "image",
+    keyword: "compress heic",
+  },
+  {
     slug: "image-converter",
     title: "Image Converter",
     shortName: "Converter",
