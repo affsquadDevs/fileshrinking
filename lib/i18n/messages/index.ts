@@ -1,12 +1,24 @@
 import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
 import { en, type Messages } from "@/lib/i18n/messages/en";
 import { es } from "@/lib/i18n/messages/es";
+import { pt } from "@/lib/i18n/messages/pt";
+import { it } from "@/lib/i18n/messages/it";
+import { de } from "@/lib/i18n/messages/de";
+import { fr } from "@/lib/i18n/messages/fr";
+import { pl } from "@/lib/i18n/messages/pl";
+import { uk } from "@/lib/i18n/messages/uk";
 
 /** Locale → dictionary. Locales not yet translated fall back to English so the
  *  UI never shows blank strings. */
 const DICTIONARIES: Partial<Record<Locale, Messages>> = {
   en,
   es,
+  pt,
+  it,
+  de,
+  fr,
+  pl,
+  uk,
 };
 
 export function getMessages(locale: Locale): Messages {

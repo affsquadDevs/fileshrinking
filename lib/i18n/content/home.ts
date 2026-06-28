@@ -4,6 +4,12 @@
  * HomeView component — this is text only, so it's translation-friendly.
  */
 import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
+import { content as homePt } from "@/lib/i18n/content/home/pt";
+import { content as homeIt } from "@/lib/i18n/content/home/it";
+import { content as homeDe } from "@/lib/i18n/content/home/de";
+import { content as homeFr } from "@/lib/i18n/content/home/fr";
+import { content as homePl } from "@/lib/i18n/content/home/pl";
+import { content as homeUk } from "@/lib/i18n/content/home/uk";
 
 export interface HomeFeature {
   title: string;
@@ -285,7 +291,16 @@ const ES: HomeContent = {
   ctaTrust: "Por qué confiar en nosotros",
 };
 
-const HOME_CONTENT: Partial<Record<Locale, HomeContent>> = { en: EN, es: ES };
+const HOME_CONTENT: Partial<Record<Locale, HomeContent>> = {
+  en: EN,
+  es: ES,
+  pt: homePt,
+  it: homeIt,
+  de: homeDe,
+  fr: homeFr,
+  pl: homePl,
+  uk: homeUk,
+};
 
 export function getHomeContent(locale: Locale): HomeContent {
   return HOME_CONTENT[locale] ?? HOME_CONTENT[DEFAULT_LOCALE]!;

@@ -26,7 +26,16 @@ export const PREFIXED_LOCALES = LOCALES.filter(
  * Add a locale here once its full content set is live. (Other locales' routes
  * still exist but fall back to English and aren't advertised.)
  */
-export const LIVE_LOCALES: Locale[] = ["en", "es"];
+export const LIVE_LOCALES: Locale[] = [
+  "en",
+  "es",
+  "pt",
+  "it",
+  "de",
+  "fr",
+  "pl",
+  "uk",
+];
 
 /** Display metadata for the language switcher. `name` is the autonym (shown to
  *  speakers of that language); `english` is for aria/fallback. */

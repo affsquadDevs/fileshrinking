@@ -7,6 +7,12 @@
  */
 import { getTool } from "@/lib/site-config";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
+import { labels as labelsPt } from "@/lib/i18n/content/tool-labels/pt";
+import { labels as labelsIt } from "@/lib/i18n/content/tool-labels/it";
+import { labels as labelsDe } from "@/lib/i18n/content/tool-labels/de";
+import { labels as labelsFr } from "@/lib/i18n/content/tool-labels/fr";
+import { labels as labelsPl } from "@/lib/i18n/content/tool-labels/pl";
+import { labels as labelsUk } from "@/lib/i18n/content/tool-labels/uk";
 
 export interface ToolLabel {
   title: string;
@@ -98,6 +104,12 @@ const ES: Record<string, ToolLabel> = {
 
 const TOOL_LABELS: Partial<Record<Locale, Record<string, ToolLabel>>> = {
   es: ES,
+  pt: labelsPt,
+  it: labelsIt,
+  de: labelsDe,
+  fr: labelsFr,
+  pl: labelsPl,
+  uk: labelsUk,
 };
 
 export function localizedTool(slug: string, locale: Locale): ToolLabel {
