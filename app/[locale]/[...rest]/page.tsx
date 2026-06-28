@@ -3,21 +3,24 @@ import { redirect, notFound } from "next/navigation";
 import { getTool, TOOLS, COMPANY_LINKS, LEGAL_LINKS } from "@/lib/site-config";
 import { POSTS } from "@/lib/blog/registry";
 import { ToolPageLayout } from "@/components/tools/tool-page-layout";
+import { ContentPageLayout } from "@/components/content/page-layout";
 import { toolRenderer } from "@/lib/tools/tool-renderers";
 import { getToolContent } from "@/lib/i18n/content/tools";
+import { getContentPage, isContentPageSlug } from "@/lib/i18n/content/pages";
 import { buildMetadata } from "@/lib/seo/metadata";
 import {
   PREFIXED_LOCALES,
   isLocale,
   DEFAULT_LOCALE,
+  localizePath,
   type Locale,
 } from "@/lib/i18n/config";
+import { getT } from "@/lib/i18n/messages";
 
 /**
- * Localized non-home routes. Renders translated tool-page content when it
- * exists; otherwise 308-redirects to the English equivalent so links never
- * break while translations are still being added. Dedicated localized routes
- * (blog, legal, …) added later take precedence over this catch-all.
+ * Localized non-home, non-blog routes. Renders translated tool pages and
+ * static content pages (legal, about) when available; otherwise 308-redirects
+ * to the English equivalent so links never break.
  */
 function englishPaths(): string[][] {
   const paths: string[][] = [
@@ -28,8 +31,7 @@ function englishPaths(): string[][] {
   ];
   const seen = new Set<string>();
   return paths.filter((segs) => {
-    // Blog routes are handled by dedicated app/[locale]/blog/* routes — exclude
-    // them here so prerendered paths don't collide.
+    // Blog routes have dedicated app/[locale]/blog/* routes — exclude here.
     if (segs[0] === "blog") return false;
     const key = segs.join("/");
     return seen.has(key) ? false : (seen.add(key), true);
@@ -46,13 +48,22 @@ export function generateStaticParams() {
   return params;
 }
 
-function resolveTool(locale: string, rest: string[]) {
+type Resolved =
+  | { kind: "tool"; slug: string; locale: Locale }
+  | { kind: "page"; slug: string; locale: Locale };
+
+function resolve(locale: string, rest: string[]): Resolved | null {
   if (!isLocale(locale) || locale === DEFAULT_LOCALE) return null;
   if (rest.length !== 1) return null;
-  const tool = getTool(rest[0]);
-  if (!tool) return null;
-  const content = getToolContent(rest[0], locale as Locale);
-  return content ? { slug: rest[0], locale: locale as Locale, content } : null;
+  const slug = rest[0];
+  const loc = locale as Locale;
+  if (getTool(slug) && getToolContent(slug, loc)) {
+    return { kind: "tool", slug, locale: loc };
+  }
+  if (isContentPageSlug(slug) && getContentPage(slug, loc)) {
+    return { kind: "page", slug, locale: loc };
+  }
+  return null;
 }
 
 export async function generateMetadata({
@@ -61,13 +72,23 @@ export async function generateMetadata({
   params: Promise<{ locale: string; rest: string[] }>;
 }): Promise<Metadata> {
   const { locale, rest } = await params;
-  const resolved = resolveTool(locale, rest);
-  if (!resolved) return {};
+  const r = resolve(locale, rest);
+  if (!r) return {};
+  if (r.kind === "tool") {
+    const c = getToolContent(r.slug, r.locale)!;
+    return buildMetadata({
+      title: c.metaTitle,
+      description: c.metaDescription,
+      path: `/${r.slug}`,
+      locale: r.locale,
+    });
+  }
+  const c = getContentPage(r.slug, r.locale)!;
   return buildMetadata({
-    title: resolved.content.metaTitle,
-    description: resolved.content.metaDescription,
-    path: `/${resolved.slug}`,
-    locale: resolved.locale,
+    title: c.metaTitle,
+    description: c.metaDescription,
+    path: `/${r.slug}`,
+    locale: r.locale,
   });
 }
 
@@ -79,22 +100,42 @@ export default async function LocalizedCatchAll({
   const { locale, rest } = await params;
   if (!isLocale(locale) || locale === DEFAULT_LOCALE) notFound();
 
-  const resolved = resolveTool(locale, rest);
-  if (resolved) {
-    const { slug, content } = resolved;
+  const r = resolve(locale, rest);
+
+  if (r?.kind === "tool") {
+    const c = getToolContent(r.slug, r.locale)!;
     return (
       <ToolPageLayout
-        slug={slug}
-        locale={resolved.locale}
-        heading={content.heading}
-        intro={content.intro}
-        lastUpdated={content.lastUpdated}
-        howTo={content.howTo}
-        faqs={content.faqs}
-        content={content.content}
+        slug={r.slug}
+        locale={r.locale}
+        heading={c.heading}
+        intro={c.intro}
+        lastUpdated={c.lastUpdated}
+        howTo={c.howTo}
+        faqs={c.faqs}
+        content={c.content}
       >
-        {toolRenderer(slug, resolved.locale)}
+        {toolRenderer(r.slug, r.locale)}
       </ToolPageLayout>
+    );
+  }
+
+  if (r?.kind === "page") {
+    const c = getContentPage(r.slug, r.locale)!;
+    const t = getT(r.locale);
+    return (
+      <ContentPageLayout
+        title={c.title}
+        intro={c.intro}
+        lastUpdated={c.lastUpdated}
+        locale={r.locale}
+        crumbs={[
+          { label: t("common.home"), href: localizePath("/", r.locale) },
+          { label: c.title },
+        ]}
+      >
+        {c.body}
+      </ContentPageLayout>
     );
   }
 
