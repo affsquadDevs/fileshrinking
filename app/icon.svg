@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="FileShrinking">
+  <rect x="16" y="16" width="480" height="480" rx="116" fill="#2563eb"/>
+  <g stroke="#ffffff" stroke-width="42" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- top-left arrow compressing toward the centre (down-right) -->
+    <path d="M168 168 L244 244"/>
+    <path d="M244 188 L244 244 L188 244"/>
+    <!-- bottom-right arrow compressing toward the centre (up-left) -->
+    <path d="M344 344 L268 268"/>
+    <path d="M268 324 L268 268 L324 268"/>
+  </g>
+</svg>
