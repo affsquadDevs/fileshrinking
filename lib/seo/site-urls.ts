@@ -21,20 +21,25 @@ export interface SiteEntry {
   priority: number;
 }
 
-export function getSiteEntries(): SiteEntry[] {
-  const now = new Date();
+/**
+ * Stable last-modified date for non-article pages. Bump this when the tool/
+ * static-page content is meaningfully revised. Using a fixed date (not the
+ * build time) keeps lastmod honest — it shouldn't change on every deploy.
+ */
+const STATIC_LASTMOD = new Date("2026-06-28T00:00:00.000Z");
 
+export function getSiteEntries(): SiteEntry[] {
   const entries: SiteEntry[] = [
-    { path: "/", lastModified: now, changeFrequency: "weekly", priority: 1 },
+    { path: "/", lastModified: STATIC_LASTMOD, changeFrequency: "weekly", priority: 1 },
     ...TOOLS.map((t) => ({
       path: `/${t.slug}`,
-      lastModified: now,
+      lastModified: STATIC_LASTMOD,
       changeFrequency: "monthly" as ChangeFreq,
       priority: t.isHub ? 0.9 : 0.8,
     })),
     ...[...COMPANY_LINKS, ...LEGAL_LINKS].map((l) => ({
       path: l.href,
-      lastModified: now,
+      lastModified: STATIC_LASTMOD,
       changeFrequency: "monthly" as ChangeFreq,
       priority: l.href === "/blog" ? 0.7 : 0.4,
     })),
