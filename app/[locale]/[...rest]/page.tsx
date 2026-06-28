@@ -1,17 +1,23 @@
-import { redirect } from "next/navigation";
-import {
-  TOOLS,
-  COMPANY_LINKS,
-  LEGAL_LINKS,
-} from "@/lib/site-config";
+import type { Metadata } from "next";
+import { redirect, notFound } from "next/navigation";
+import { getTool, TOOLS, COMPANY_LINKS, LEGAL_LINKS } from "@/lib/site-config";
 import { POSTS } from "@/lib/blog/registry";
-import { PREFIXED_LOCALES } from "@/lib/i18n/config";
+import { ToolPageLayout } from "@/components/tools/tool-page-layout";
+import { toolRenderer } from "@/lib/tools/tool-renderers";
+import { getToolContent } from "@/lib/i18n/content/tools";
+import { buildMetadata } from "@/lib/seo/metadata";
+import {
+  PREFIXED_LOCALES,
+  isLocale,
+  DEFAULT_LOCALE,
+  type Locale,
+} from "@/lib/i18n/config";
 
 /**
- * Fallback for any localized path that does not yet have a dedicated
- * (translated) route. It 308-redirects to the English equivalent so links are
- * never broken while translations are still being added. As a page gets its own
- * app/[locale]/… route, that route takes precedence over this catch-all.
+ * Localized non-home routes. Renders translated tool-page content when it
+ * exists; otherwise 308-redirects to the English equivalent so links never
+ * break while translations are still being added. Dedicated localized routes
+ * (blog, legal, …) added later take precedence over this catch-all.
  */
 function englishPaths(): string[][] {
   const paths: string[][] = [
@@ -20,7 +26,6 @@ function englishPaths(): string[][] {
     ...LEGAL_LINKS.map((l) => l.href.replace(/^\//, "").split("/")),
     ...POSTS.map((p) => ["blog", p.slug]),
   ];
-  // de-dupe
   const seen = new Set<string>();
   return paths.filter((segs) => {
     const key = segs.join("/");
@@ -38,11 +43,57 @@ export function generateStaticParams() {
   return params;
 }
 
-export default async function LocalizedFallback({
+function resolveTool(locale: string, rest: string[]) {
+  if (!isLocale(locale) || locale === DEFAULT_LOCALE) return null;
+  if (rest.length !== 1) return null;
+  const tool = getTool(rest[0]);
+  if (!tool) return null;
+  const content = getToolContent(rest[0], locale as Locale);
+  return content ? { slug: rest[0], locale: locale as Locale, content } : null;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; rest: string[] }>;
+}): Promise<Metadata> {
+  const { locale, rest } = await params;
+  const resolved = resolveTool(locale, rest);
+  if (!resolved) return {};
+  return buildMetadata({
+    title: resolved.content.metaTitle,
+    description: resolved.content.metaDescription,
+    path: `/${resolved.slug}`,
+    locale: resolved.locale,
+  });
+}
+
+export default async function LocalizedCatchAll({
   params,
 }: {
   params: Promise<{ locale: string; rest: string[] }>;
 }) {
-  const { rest } = await params;
+  const { locale, rest } = await params;
+  if (!isLocale(locale) || locale === DEFAULT_LOCALE) notFound();
+
+  const resolved = resolveTool(locale, rest);
+  if (resolved) {
+    const { slug, content } = resolved;
+    return (
+      <ToolPageLayout
+        slug={slug}
+        locale={resolved.locale}
+        heading={content.heading}
+        intro={content.intro}
+        lastUpdated={content.lastUpdated}
+        howTo={content.howTo}
+        faqs={content.faqs}
+        content={content.content}
+      >
+        {toolRenderer(slug, resolved.locale)}
+      </ToolPageLayout>
+    );
+  }
+
   redirect("/" + rest.join("/"));
 }

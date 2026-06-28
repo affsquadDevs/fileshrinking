@@ -120,6 +120,7 @@ export const en = {
     heightPx: "Height (px)",
     keepAspect: "Keep aspect ratio",
     imageDropHint: "JPEG, PNG, WebP, AVIF and GIF supported.",
+    heicDropHint: "HEIC & HEIF photos (.heic, .heif) — convert to JPG, WebP or AVIF.",
   },
   pages: {
     about: "About",

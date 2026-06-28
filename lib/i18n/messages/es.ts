@@ -113,6 +113,7 @@ export const es: Messages = {
     heightPx: "Alto (px)",
     keepAspect: "Mantener proporción",
     imageDropHint: "Compatible con JPEG, PNG, WebP, AVIF y GIF.",
+    heicDropHint: "Fotos HEIC y HEIF (.heic, .heif): convierte a JPG, WebP o AVIF.",
   },
   pages: {
     about: "Quiénes somos",
