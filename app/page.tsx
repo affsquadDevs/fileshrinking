@@ -8,7 +8,6 @@ import {
   Upload,
   Settings2,
   Download,
-  Code2,
   Eye,
   Scale,
   Server,
@@ -18,6 +17,7 @@ import { Container } from "@/components/layout/container";
 import { Section, SectionHeader } from "@/components/layout/section";
 import { LinkButton } from "@/components/link-button";
 import { buttonVariants } from "@/components/ui/button";
+import { GithubMark } from "@/components/icons/github";
 import { ToolCard } from "@/components/tool-card";
 import { PrivacyBadge } from "@/components/privacy-badge";
 import { FAQ } from "@/components/faq";
@@ -256,7 +256,7 @@ export default function HomePage() {
       <Section className="border-t border-border/60">
         <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-brand/20 bg-brand/5 p-8 text-center sm:p-12">
           <span className="mx-auto flex size-12 items-center justify-center rounded-xl bg-brand/10 text-brand">
-            <Code2 className="size-6" aria-hidden="true" />
+            <GithubMark className="size-6" />
           </span>
           <h2 className="mt-5 text-balance text-3xl font-bold tracking-tight">
             Fully open source
@@ -298,7 +298,7 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className={cn(buttonVariants({ size: "lg" }))}
             >
-              <Code2 className="size-4" aria-hidden="true" />
+              <GithubMark className="size-4" />
               View the source on GitHub
             </a>
           </div>

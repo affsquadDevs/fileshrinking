@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { Logo } from "@/components/layout/logo";
 import { PrivacyBadge } from "@/components/privacy-badge";
+import { GithubMark } from "@/components/icons/github";
 import { ConsentSettingsButton } from "@/components/consent/consent-settings-button";
 import {
   SITE,
@@ -67,9 +68,10 @@ export function Footer() {
                   href={SITE.repoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={linkCls}
+                  className={`${linkCls} inline-flex items-center gap-1.5`}
                 >
-                  Open source ↗
+                  <GithubMark className="size-3.5" />
+                  Open source
                 </a>
               </li>
             </ul>
