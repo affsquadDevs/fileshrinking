@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
@@ -12,15 +14,17 @@ import {
   COMPANY_LINKS,
   LEGAL_LINKS,
 } from "@/lib/site-config";
-import { DEFAULT_LOCALE, localizePath, type Locale } from "@/lib/i18n/config";
-import { getT, type MessageKey } from "@/lib/i18n/messages";
+import { localizePath } from "@/lib/i18n/config";
+import { type MessageKey } from "@/lib/i18n/messages";
+import { useT, useLocale } from "@/components/i18n/locale-provider";
 import { localizedTool } from "@/lib/i18n/content";
 
 const linkCls =
   "text-sm text-muted-foreground transition-colors hover:text-foreground";
 
-export function Footer({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
-  const t = getT(locale);
+export function Footer() {
+  const locale = useLocale();
+  const t = useT();
   const lp = (href: string) => localizePath(href, locale);
   const pageLabel = (href: string) =>
     t(`pages.${href.replace(/^\//, "")}` as MessageKey);
