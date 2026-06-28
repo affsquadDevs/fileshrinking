@@ -47,12 +47,17 @@ async function submit(urls) {
 }
 
 const args = process.argv.slice(2);
-const urls =
-  args.length === 0 || args[0] === "--all" ? await getAllUrls() : args;
+if (args.length === 0) {
+  console.error(
+    "Usage: indexnow.mjs --all | <url> [<url>…]  (pass specific URLs for updates; --all is for full re-submits only)",
+  );
+  process.exit(1);
+}
+const urls = args[0] === "--all" ? await getAllUrls() : args;
 
 if (urls.length === 0) {
-  console.error("No URLs to submit.");
-  process.exit(1);
+  console.log("No URLs to submit.");
+  process.exit(0);
 }
 console.log(`Submitting ${urls.length} URL(s) to IndexNow…`);
 await submit(urls);

@@ -1,0 +1,49 @@
+name: IndexNow ping
+
+# On every push to main (i.e. every deploy), announce ONLY the URLs whose
+# content changed in that push to IndexNow (Bing/Yandex/etc.) — never the whole
+# batch. Shared/structural changes map to no URLs and are skipped.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: indexnow-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Submit affected URLs to IndexNow
+        run: |
+          set -euo pipefail
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.sha }}"
+          ZERO="0000000000000000000000000000000000000000"
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "$ZERO" ] || ! git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+            echo "No usable base commit; diffing against the parent of HEAD."
+            BEFORE="${AFTER}^"
+          fi
+          echo "Changed files ($BEFORE..$AFTER):"
+          git diff --name-only --diff-filter=AM "$BEFORE" "$AFTER" | tee /tmp/changed.txt
+          node scripts/changed-urls.mjs < /tmp/changed.txt > /tmp/urls.txt || true
+          if [ ! -s /tmp/urls.txt ]; then
+            echo "No content URLs affected — nothing to submit to IndexNow."
+            exit 0
+          fi
+          echo "Affected URLs:"
+          cat /tmp/urls.txt
+          xargs --no-run-if-empty node scripts/indexnow.mjs < /tmp/urls.txt
