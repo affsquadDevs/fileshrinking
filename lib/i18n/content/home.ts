@@ -290,3 +290,8 @@ const HOME_CONTENT: Partial<Record<Locale, HomeContent>> = { en: EN, es: ES };
 export function getHomeContent(locale: Locale): HomeContent {
   return HOME_CONTENT[locale] ?? HOME_CONTENT[DEFAULT_LOCALE]!;
 }
+
+/** Locales with a genuine home translation (not the English fallback). */
+export function homeTranslatedLocales(): Locale[] {
+  return Object.keys(HOME_CONTENT) as Locale[];
+}

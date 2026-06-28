@@ -5,6 +5,12 @@
  */
 import { SITE, TOOLS, COMPANY_LINKS, LEGAL_LINKS } from "@/lib/site-config";
 import { POSTS } from "@/lib/blog/registry";
+import {
+  DEFAULT_LOCALE,
+  LOCALE_META,
+  localizePath,
+} from "@/lib/i18n/config";
+import { localesForPath } from "@/lib/i18n/availability";
 
 export type ChangeFreq = "weekly" | "monthly" | "yearly";
 
@@ -49,4 +55,53 @@ export function getSiteEntries(): SiteEntry[] {
 
 export function absoluteUrl(path: string): string {
   return new URL(path, SITE.url).toString();
+}
+
+export interface LocalizedSitemapEntry {
+  url: string;
+  lastModified: Date;
+  changeFrequency: ChangeFreq;
+  priority: number;
+  /** hreflang → absolute URL (every available locale + x-default). */
+  alternates: Record<string, string>;
+}
+
+/**
+ * One sitemap entry per (path × available-locale), each carrying the full
+ * hreflang alternate set. Only locales with a genuine translation are emitted.
+ */
+export function getLocalizedSitemap(): LocalizedSitemapEntry[] {
+  const out: LocalizedSitemapEntry[] = [];
+  for (const e of getSiteEntries()) {
+    const locales = localesForPath(e.path);
+    const alternates: Record<string, string> = {};
+    for (const loc of locales) {
+      alternates[LOCALE_META[loc].bcp47] = absoluteUrl(
+        localizePath(e.path, loc),
+      );
+    }
+    alternates["x-default"] = absoluteUrl(localizePath(e.path, DEFAULT_LOCALE));
+
+    for (const loc of locales) {
+      out.push({
+        url: absoluteUrl(localizePath(e.path, loc)),
+        lastModified: e.lastModified,
+        changeFrequency: e.changeFrequency,
+        priority: e.priority,
+        alternates,
+      });
+    }
+  }
+  return out;
+}
+
+/** Flat list of every localized absolute URL (for the plain-text sitemap). */
+export function getAllLocalizedUrls(): string[] {
+  const urls: string[] = [];
+  for (const e of getSiteEntries()) {
+    for (const loc of localesForPath(e.path)) {
+      urls.push(absoluteUrl(localizePath(e.path, loc)));
+    }
+  }
+  return Array.from(new Set(urls));
 }

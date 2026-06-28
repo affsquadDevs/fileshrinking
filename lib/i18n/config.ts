@@ -21,6 +21,13 @@ export const PREFIXED_LOCALES = LOCALES.filter(
   (l) => l !== DEFAULT_LOCALE,
 ) as Exclude<Locale, typeof DEFAULT_LOCALE>[];
 
+/**
+ * Locales that are fully translated and offered in the language switcher.
+ * Add a locale here once its full content set is live. (Other locales' routes
+ * still exist but fall back to English and aren't advertised.)
+ */
+export const LIVE_LOCALES: Locale[] = ["en", "es"];
+
 /** Display metadata for the language switcher. `name` is the autonym (shown to
  *  speakers of that language); `english` is for aria/fallback. */
 export const LOCALE_META: Record<

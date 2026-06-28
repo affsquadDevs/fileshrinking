@@ -1,5 +1,7 @@
 import { SITE, TOOLS, TOOL_CATEGORIES, type ToolCategoryId } from "@/lib/site-config";
 import { POSTS } from "@/lib/blog/registry";
+import { LOCALE_META, localizePath } from "@/lib/i18n/config";
+import { localesForPath } from "@/lib/i18n/availability";
 
 /**
  * /llms.txt — a structured, machine-readable site summary for LLMs, following
@@ -58,6 +60,17 @@ export function GET(): Response {
   L.push(`- [Cookie Policy](${abs("/cookie-policy")}): Cookies and storage, all consent-gated.`);
   L.push(`- [Terms of Service](${abs("/terms-of-service")}): Terms for using the free tools.`);
   L.push(`- [Disclaimer](${abs("/disclaimer")}): Honest notes on compression limits.`);
+  L.push("");
+
+  L.push("## Languages");
+  L.push(
+    "The site is fully localized. English is canonical at the root; other languages are path-prefixed.",
+  );
+  for (const loc of localesForPath("/")) {
+    L.push(
+      `- ${LOCALE_META[loc].english} (${LOCALE_META[loc].bcp47}): ${abs(localizePath("/", loc))}`,
+    );
+  }
   L.push("");
 
   L.push("## Key facts");

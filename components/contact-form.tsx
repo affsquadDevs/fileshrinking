@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { SITE } from "@/lib/site-config";
+import { useT } from "@/components/i18n/locale-provider";
 
 /**
  * Privacy-respecting contact form. There is no server endpoint — submitting
@@ -15,6 +16,7 @@ import { SITE } from "@/lib/site-config";
  * shown directly with a copy button as a fallback.
  */
 export function ContactForm() {
+  const t = useT();
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [message, setMessage] = React.useState("");
@@ -24,12 +26,12 @@ export function ContactForm() {
 
   function validate() {
     const e: Record<string, string> = {};
-    if (!name.trim()) e.name = "Please enter your name.";
-    if (!email.trim()) e.email = "Please enter your email.";
+    if (!name.trim()) e.name = t("contactForm.errName");
+    if (!email.trim()) e.email = t("contactForm.errEmail");
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      e.email = "Please enter a valid email address.";
+      e.email = t("contactForm.errEmailInvalid");
     if (message.trim().length < 10)
-      e.message = "Please enter a message of at least 10 characters.";
+      e.message = t("contactForm.errMessage");
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -37,7 +39,9 @@ export function ContactForm() {
   function onSubmit(ev: React.FormEvent) {
     ev.preventDefault();
     if (!validate()) return;
-    const subject = encodeURIComponent(`Contact from ${name} — ${SITE.name}`);
+    const subject = encodeURIComponent(
+      t("contactForm.subject", { name, site: SITE.name }),
+    );
     const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
     window.location.href = `mailto:${SITE.contactEmail}?subject=${subject}&body=${body}`;
     setOpened(true);
@@ -58,7 +62,7 @@ export function ContactForm() {
       <form onSubmit={onSubmit} noValidate className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="cf-name">Name</Label>
+            <Label htmlFor="cf-name">{t("contactForm.name")}</Label>
             <Input
               id="cf-name"
               value={name}
@@ -74,7 +78,7 @@ export function ContactForm() {
             ) : null}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="cf-email">Email</Label>
+            <Label htmlFor="cf-email">{t("contactForm.email")}</Label>
             <Input
               id="cf-email"
               type="email"
@@ -92,7 +96,7 @@ export function ContactForm() {
           </div>
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="cf-message">Message</Label>
+          <Label htmlFor="cf-message">{t("contactForm.message")}</Label>
           <textarea
             id="cf-message"
             value={message}
@@ -101,7 +105,7 @@ export function ContactForm() {
             aria-invalid={!!errors.message}
             aria-describedby={errors.message ? "cf-message-err" : undefined}
             className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-            placeholder="How can we help?"
+            placeholder={t("contactForm.placeholder")}
           />
           {errors.message ? (
             <p id="cf-message-err" className="text-xs text-destructive">
@@ -111,16 +115,13 @@ export function ContactForm() {
         </div>
         <Button type="submit">
           <Send className="size-4" aria-hidden="true" />
-          Send message
+          {t("contactForm.send")}
         </Button>
       </form>
 
       {opened ? (
         <Alert>
-          <AlertDescription>
-            Your email app should have opened with the message ready to send. If
-            it didn&rsquo;t, email us directly at the address below.
-          </AlertDescription>
+          <AlertDescription>{t("contactForm.opened")}</AlertDescription>
         </Alert>
       ) : null}
 
@@ -144,7 +145,7 @@ export function ContactForm() {
           ) : (
             <Copy className="size-4" aria-hidden="true" />
           )}
-          {copied ? "Copied" : "Copy"}
+          {copied ? t("contactForm.copied") : t("contactForm.copy")}
         </Button>
       </div>
     </div>

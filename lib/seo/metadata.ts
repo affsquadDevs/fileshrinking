@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { SITE } from "@/lib/site-config";
 import {
   DEFAULT_LOCALE,
-  LOCALES,
   LOCALE_META,
   localizePath,
   type Locale,
 } from "@/lib/i18n/config";
+import { localesForPath } from "@/lib/i18n/availability";
 
 export interface PageMetaInput {
   title: string;
@@ -42,9 +42,10 @@ export function buildMetadata(input: PageMetaInput): Metadata {
   const url = abs(localizedPath);
   const ogImage = input.ogImage ?? "/og/default.png";
 
-  // hreflang map: each locale's URL keyed by its BCP-47 code, plus x-default.
+  // hreflang map: only locales that actually have this page, keyed by BCP-47,
+  // plus x-default → English.
   const languages: Record<string, string> = {};
-  for (const loc of LOCALES) {
+  for (const loc of localesForPath(input.path)) {
     languages[LOCALE_META[loc].bcp47] = abs(localizePath(input.path, loc));
   }
   languages["x-default"] = abs(localizePath(input.path, DEFAULT_LOCALE));

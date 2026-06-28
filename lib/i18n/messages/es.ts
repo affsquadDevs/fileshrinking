@@ -137,6 +137,22 @@ export const es: Messages = {
     aboutAuthor: "Sobre el autor",
     backToAll: "Volver a todos los artículos",
   },
+  contactForm: {
+    name: "Nombre",
+    email: "Correo electrónico",
+    message: "Mensaje",
+    errName: "Introduce tu nombre.",
+    errEmail: "Introduce tu correo electrónico.",
+    errEmailInvalid: "Introduce una dirección de correo válida.",
+    errMessage: "Introduce un mensaje de al menos 10 caracteres.",
+    placeholder: "¿Cómo podemos ayudarte?",
+    send: "Enviar mensaje",
+    opened:
+      "Tu aplicación de correo debería haberse abierto con el mensaje listo para enviar. Si no fue así, escríbenos directamente a la dirección de abajo.",
+    copy: "Copiar",
+    copied: "Copiado",
+    subject: "Contacto de {name} — {site}",
+  },
   langSwitcher: {
     label: "Cambiar idioma",
   },

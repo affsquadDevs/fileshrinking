@@ -12,7 +12,7 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useT, useLocale } from "@/components/i18n/locale-provider";
-import { LOCALES, LOCALE_META, localizePath, splitLocale } from "@/lib/i18n/config";
+import { LIVE_LOCALES, LOCALE_META, localizePath, splitLocale } from "@/lib/i18n/config";
 
 export function LanguageSwitcher() {
   const pathname = usePathname() || "/";
@@ -29,7 +29,7 @@ export function LanguageSwitcher() {
         <Languages className="size-5" aria-hidden="true" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-44">
-        {LOCALES.map((loc) => (
+        {LIVE_LOCALES.map((loc) => (
           <DropdownMenuItem
             key={loc}
             render={

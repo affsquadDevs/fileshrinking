@@ -144,6 +144,22 @@ export const en = {
     aboutAuthor: "About the author",
     backToAll: "Back to all articles",
   },
+  contactForm: {
+    name: "Name",
+    email: "Email",
+    message: "Message",
+    errName: "Please enter your name.",
+    errEmail: "Please enter your email.",
+    errEmailInvalid: "Please enter a valid email address.",
+    errMessage: "Please enter a message of at least 10 characters.",
+    placeholder: "How can we help?",
+    send: "Send message",
+    opened:
+      "Your email app should have opened with the message ready to send. If it didn't, email us directly at the address below.",
+    copy: "Copy",
+    copied: "Copied",
+    subject: "Contact from {name} — {site}",
+  },
   langSwitcher: {
     label: "Change language",
   },

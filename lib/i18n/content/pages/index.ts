@@ -6,11 +6,13 @@ import { content as privacyPolicyEs } from "@/lib/i18n/content/pages/privacy-pol
 import { content as termsOfServiceEs } from "@/lib/i18n/content/pages/terms-of-service.es";
 import { content as cookiePolicyEs } from "@/lib/i18n/content/pages/cookie-policy.es";
 import { content as disclaimerEs } from "@/lib/i18n/content/pages/disclaimer.es";
+import { content as contactEs } from "@/lib/i18n/content/pages/contact.es";
 
 /** Single-segment static pages handled by the localized content-page renderer.
  *  (contact is excluded for now — its form needs separate localization.) */
 export const CONTENT_PAGE_SLUGS = [
   "about",
+  "contact",
   "privacy-policy",
   "terms-of-service",
   "cookie-policy",
@@ -23,6 +25,7 @@ export function isContentPageSlug(slug: string): boolean {
 
 const ES: Record<string, LocalizedContentPage> = {
   about: aboutEs,
+  contact: contactEs,
   "privacy-policy": privacyPolicyEs,
   "terms-of-service": termsOfServiceEs,
   "cookie-policy": cookiePolicyEs,
